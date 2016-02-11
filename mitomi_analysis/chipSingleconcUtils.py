@@ -130,7 +130,7 @@ def concatGprFiles_v3(pFN, cFN, dFN, oFN, singleF=0, rlF=0, tbF=0):
     str1 = "Block\tColumn\tRow\tOutColumn\tOutRow\tDia\tFlag\tP_FG\tDNA_FG\t\
         P_BG\tDNA_BG\tCH_FG\n"
     oF.write(str1)
-    for a in range(0, en(blockL)):
+    for a in range(0, len(blockL)):
         oL = [str(blockL[a]), str(colL[a]), str(rowL[a]), str(outColL[a]),
               str(outRowL[a]), str(diaL[a]), str(flagL[a]), str(pFL[a]),
               str(dFL[a]), str(pBL[a]), str(dBL[a]), str(cFL[a])]
