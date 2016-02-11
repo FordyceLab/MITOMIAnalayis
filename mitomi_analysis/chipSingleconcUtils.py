@@ -2,7 +2,6 @@ import numpy as N
 import types
 from plotting import plotUtils
 from statistics import statsUtils
-# from lab import sequence
 from fitting import fitUtils
 import operator
 from matplotlib import pylab as plt
