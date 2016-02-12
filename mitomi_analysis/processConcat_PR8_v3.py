@@ -1,4 +1,3 @@
-
 import sys
 import os
 from getopt import getopt
@@ -99,8 +98,8 @@ def main(argv=None):
         sys.exit(1)
 
     # get lists from concat file
-    blocks, oRows, oCols, rows, cols, flags, pFg, DNAFg, pBg, DNABg, chFg,
-    pBSub, DNABSub, chBSub, ratio, ratioNorm, oligoNum = \
+    blocks, oRows, oCols, rows, cols, flags, pFg, DNAFg, pBg, DNABg, chFg, \
+        pBSub, DNABSub, chBSub, ratio, ratioNorm, oligoNum = \
         chipSingleconcUtils.outputInfoFromConcatFile_v3(concatFileName,
                                                         spot2OligoFileName,
                                                         pTh=pTh,
