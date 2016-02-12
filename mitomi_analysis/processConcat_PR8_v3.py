@@ -150,7 +150,7 @@ def main(argv=None):
 
     zScore, pVal = [], []
     for a in rNN:
-        if N.isnan(a) == False:
+        if not N.isnan(a):
             zS = float(a - rParams[1]) / rParams[2]
             zScore.append(zS)
             pVal.append(stats.norm.sf(zS))
