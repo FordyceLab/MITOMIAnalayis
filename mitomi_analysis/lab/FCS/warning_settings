@@ -1,0 +1,52 @@
+#
+#	$Id: warning_settings,v 1.1.1.1 2008/03/10 18:48:55 kael Exp $	
+#
+# Kael Fischer - September, 2005
+#
+# Permission to use, modifiy and redistrubue is allowed 
+# only under the terms of the BSD license as specified 
+# in the LICENSE file distributed with this file.
+#
+# This software should not be used to control airplanes. 
+#
+# warning settings for fcsQC.py
+# note that adding parameters here 
+# won't do anything unless you ad them to the 
+# warnings dictionary in fcsQC.py
+#
+# right now I understand some event count limits
+# and that there are some CV values that are too high
+#
+# the thing being limited is the first column
+# the limit is the second 
+# the explanatory message is the third
+# 
+# tabs delimit the columns
+#
+minTotalEvents			8000	Not enough total events measured
+minNetEvents			5000	Not enough events after filtering
+maxExcludedEvents		5000	Too many events are being filtered out
+maxCV.FITC-A			0.1	FITC CV out of tolerance
+maxCV.PE-A			0.1	PE CV out of tolerance
+maxCV.PerCP-Cy5-5-A		0.1	PerCP-Cy5-5 CV out of tolerance
+maxCV.PE-Cy7-A			0.1	PE-Cy7 CV out of tolerance
+maxCV.APC-A			0.1	APC CV out of tolerance
+maxCV.APC-Cy7-A			0.1	APC-Cy7 CV out of tolerance
+maxCV.Cascade Blue-A		0.1	Cascade Blue CV out of tolerance
+maxCV.Alexa 430-A		0.1	Alexa 430 CV out of tolerance
+minMedian.FITC-A		1000	FITC intensity too low
+minMedian.PE-A			1000	PE intensity too low
+minMedian.PerCP-Cy5-5-A		1000	PerCP-Cy5-5 intensity too low
+minMedian.PE-Cy7-A		1000	PE-Cy7 intensity too low
+minMedian.APC-A			1000	APC intensity too low
+minMedian.APC-Cy7-A		1000	APC-Cy7 intensity too low
+minMedian.Cascade Blue-A	1000	Cascade Blue intensity too low
+minMedian.Alexa 430-A		1000	Alexa 430 intensity too low
+maxMedian.FITC-A		500000	FITC intensity to high
+maxMedian.PE-A			500000	PE intensity to high
+maxMedian.PerCP-Cy5-5-A		500000	PerCP-Cy5-5 intensity too high
+maxMedian.PE-Cy7-A		500000	PE-Cy7 intensity too high
+maxMedian.APC-A			500000	APC intensity too high
+maxMedian.APC-Cy7-A		500000	APC-Cy7 intensity too high
+maxMedian.Cascade Blue-A	500000	Cascade Blue intensity too high
+maxMedian.Alexa 430-A		500000	Alexa 430 intensity too high

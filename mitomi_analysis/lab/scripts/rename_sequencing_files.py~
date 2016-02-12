@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+#
+# rename_sequencing_files.py
+#
+# Author: Polly Fordyce
+#
+# This file just takes command line inputs to run some of
+# the programs in the filename_utils module and rename
+# all files in a directory according to a tab-delimited text file.
+
+import os
+import sys
+import filename_utils
+
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv
+
+    dir_name = argv[1]
+    newname_file = argv[2]
+    print dir_name, newname_file
+
+    filename_utils.rename_files(dir_name,newname_file)
+
+
+##############################################
+if __name__ == "__main__":
+    main()
