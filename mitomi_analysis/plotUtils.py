@@ -8,6 +8,7 @@ matplotlib.use('Agg')
 
 from matplotlib import pylab as plt
 
+
 def createAndSaveFig(xData, yData, figFileRoot, xLabel="", yLabel="",
                      fileExt='.png', xMin=-1, xMax=-1, yMin=-10, yMax=-1,
                      log2Y=0, log2X=0, plotType='bo', axisFontSize=20,
