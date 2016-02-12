@@ -3,10 +3,10 @@ import types
 import matplotlib
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
-from matplotlib import pylab as plt
 
 matplotlib.use('Agg')
 
+from matplotlib import pylab as plt
 
 def createAndSaveFig(xData, yData, figFileRoot, xLabel="", yLabel="",
                      fileExt='.png', xMin=-1, xMax=-1, yMin=-10, yMax=-1,
