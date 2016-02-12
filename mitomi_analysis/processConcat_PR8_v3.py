@@ -2,7 +2,7 @@ from __future__ import division
 import sys
 import os
 from getopt import getopt
-from M_initialAnalysis import chipSingleconcUtils
+import chipSingleconcUtils
 from plotting import plotUtils
 from statistics import statsUtils
 import numpy as N
