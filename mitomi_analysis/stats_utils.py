@@ -8,7 +8,7 @@ def correlation_coef(list1, list2):
     between two lists."""
 
     if len(list1) != len(list2):
-        print "Lists are different lengths!  User is a bozo!"
+        print("Lists are different lengths!  User is a bozo!")
 
     array1 = array(list1)
     array2 = array(list2)
