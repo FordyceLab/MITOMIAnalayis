@@ -7,7 +7,7 @@ import stats_utils
 import numpy as N
 from lab import tabbedfile
 from lab.tabbedfile import tabbifyMatrix
-from fileIOScripts import fileIOUtils
+import fileIOUtils
 
 
 HELP_STRING = """
