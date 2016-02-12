@@ -19,7 +19,7 @@ def fasta_to_chromosomes(infile):
         temp_line = line.split()[0]
 
         if temp_line[0] == '>':
-            print "Working on chromosome " + str(chrom_index)
+            print("Working on chromosome " + str(chrom_index))
             chrom_name = temp_line.split('|')[1]
             out_filename = "Chromosome_" + str(chrom_name)+".txt"
             out_file = open(out_filename, 'w')
@@ -100,7 +100,7 @@ def sort_results_by_NNN(inFileName, outFileName):
 
     for line in inFile:
         tempLine = line.split()
-        print "First letter is "+tempLine[1]
+        print("First letter is "+tempLine[1])
         if tempLine[1] == 'T':
             tRatio.append(tempLine[0])
             tOligo.append(tempLine[2])
@@ -114,7 +114,7 @@ def sort_results_by_NNN(inFileName, outFileName):
             gRatio.append(tempLine[0])
             gOligo.append(tempLine[2])
         else:
-            print "First letter is not a DNA base!"
+            print("First letter is not a DNA base!")
 
     listOfLists = [
         tRatio, tOligo, aRatio, aOligo, cRatio, cOligo, gRatio, gOligo]
@@ -175,9 +175,9 @@ def average_RC_values(inFileName, outFileName):
     listOfLists = [names, ratios, sems, ratiosWithRC, semsWithRC]
 
     for n in range(0, len(names)):
-        print "n = "+str(n)
+        print("n = "+str(n))
         for item in listOfLists:
-            print "Item = "+str(item[n])
+            print("Item = "+str(item[n]))
             outFile.write(str(item[n]))
             outFile.write('\t')
         outFile.write('\n')

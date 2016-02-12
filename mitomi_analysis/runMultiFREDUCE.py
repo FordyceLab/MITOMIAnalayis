@@ -1,4 +1,4 @@
-from __future__ import division
+
 import sys
 import os
 from getopt import getopt
@@ -34,21 +34,21 @@ def main(argv=None):
     try:
         optlist, args = getopt(argv[1:], "he:s:f:")
     except:
-        print ""
-        print HELP_STRING
+        print("")
+        print(HELP_STRING)
         sys.exit(1)
 
     if len(optlist) == 0:
-        print ""
-        print HELP_STRING
+        print("")
+        print(HELP_STRING)
         sys.exit(1)
 
     for (opt, opt_arg) in optlist:
-        print opt
-        print opt_arg
+        print(opt)
+        print(opt_arg)
         if opt == '-h':
-            print ""
-            print HELP_STRING
+            print("")
+            print(HELP_STRING)
             sys.exit(1)
         elif opt == '-e':
             expFN = opt_arg
@@ -58,7 +58,7 @@ def main(argv=None):
             fDir = opt_arg
 
     if expFN == "" or seqFN == "":
-        print HELP_STRING
+        print(HELP_STRING)
         sys.exit(1)
 
     os.system('cp ' + seqFN + ' ' + seqFN + 'ta')
@@ -66,16 +66,16 @@ def main(argv=None):
 
     for a in range(6, 10):
         for b in range(0, 3):
-            print 'working on ' + str(a) + ' ' + str(b)
-            print './freduce -r -x ' + expFN + ' -s ' + seqFN + 'ta '\
+            print('working on ' + str(a) + ' ' + str(b))
+            print('./freduce -r -x ' + expFN + ' -s ' + seqFN + 'ta '\
                 + str(a) + ' ' + str(b) + ' > ' + \
-                expFN[:-4] + '.r-' + str(a) + '-' + str(b) + '.txt'
+                expFN[:-4] + '.r-' + str(a) + '-' + str(b) + '.txt')
             os.system('./freduce -r -x ' + expFN + ' -s ' + seqFN + 'ta ' +
                       str(a) + ' ' + str(b) + ' > ' + expFN[:-4] + '.r-' +
                       str(a) + '-' + str(b) + '.txt')
-            print './freduce -x ' + expFN + ' -s ' + seqFN + 'ta '\
+            print('./freduce -x ' + expFN + ' -s ' + seqFN + 'ta '\
                 + str(a) + ' ' + str(b) + ' > ' + \
-                expFN[:-4] + '.nr-' + str(a) + '-' + str(b) + '.txt'
+                expFN[:-4] + '.nr-' + str(a) + '-' + str(b) + '.txt')
             os.system('./freduce -x ' + expFN + ' -s ' + seqFN + 'ta ' +
                       str(a) + ' ' + str(b) + ' > ' + expFN[:-4] + '.nr-' +
                       str(a) + '-' + str(b) + '.txt')

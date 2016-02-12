@@ -1,4 +1,4 @@
-from __future__ import division
+
 import os
 import sys
 import numpy as N
@@ -11,7 +11,7 @@ def correlation_coef(list1, list2):
     between two lists."""
 
     if len(list1) != len(list2):
-        print "Lists are different lengths!  User is a bozo!"
+        print("Lists are different lengths!  User is a bozo!")
 
     array1 = array(list1)
     array2 = array(list2)
@@ -156,8 +156,8 @@ def checkForOutlier(value, avg, sdev, numPoints, percent):
         else:
             outcome = 0
     else:
-        print "You have chosen to use an invalid statistical cutoff for your\
-            t-test!"
+        print("You have chosen to use an invalid statistical cutoff for your\
+            t-test!")
 
     return outcome
 
@@ -178,10 +178,10 @@ def removeOutliers(inList):
                 qualityScore = checkForOutlier(
                     inList[n], avg, sdev, numPoints, 5)
                 if qualityScore == 1:
-                    print "old then new"
-                    print inList
+                    print("old then new")
+                    print(inList)
                     inList[n] = N.nan
-                    print inList
+                    print(inList)
                 else:
                     pass
 
@@ -411,8 +411,8 @@ def calcEScore(totalDict, fgDict, bgDict):
     bgRanks = getRanks(totalDict, fgDict)
 
     normFactor = float(1/(len(fgRanks)+len(bgRanks)))
-    bgFraction = float(N.average(bgRanks.keys()))/len(bgRanks)
-    fgFraction = float(N.average(fgRanks.keys()))/len(fgRanks)
+    bgFraction = float(N.average(list(bgRanks.keys())))/len(bgRanks)
+    fgFraction = float(N.average(list(fgRanks.keys())))/len(fgRanks)
 
     eScore = normFactor*(bgFraction-fgFraction)
 

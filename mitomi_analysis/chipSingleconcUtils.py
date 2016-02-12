@@ -317,7 +317,7 @@ def calcNumOligos(spot2OligoFileName):
     # determine the number of oligos
     numOligoD = {}
     for item in oligoD:
-        if numOligoD.has_key(oligoD[item]):
+        if oligoD[item] in numOligoD:
             pass
         else:
             if oligoD[item] == 'EMPTY':
@@ -367,7 +367,7 @@ def dataArray(spot2OligoFileName, colList, rowList, itemList):
             pass
         else:
             oligoIndex = int(oligo.split("_")[1].split(".")[0])-1
-            if repIndexD.has_key(oligo):
+            if oligo in repIndexD:
                 arrayIndex = repIndexD[oligo]
                 repIndexD[oligo] = (repIndexD[oligo] + 1)
             else:
@@ -442,11 +442,11 @@ def outputInfoFromConcatFile_v3(concatFileName, spot2OligoFileName, pTh=100,
         curRow = rows[n]
         curCol = cols[n]
         spotID = str(curCol)+'.'+str(curRow)
-        if oligoD.has_key(spotID):
+        if spotID in oligoD:
             oligo = oligoD[spotID]
         else:
-            print spotID
-            print "That key is not in the dictionary!"
+            print(spotID)
+            print("That key is not in the dictionary!")
             oligo = 'EMPTY'
         oligoNum.append(oligo.split("_")[1])
 

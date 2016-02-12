@@ -1,4 +1,4 @@
-from __future__ import division
+
 import sys
 import os
 from getopt import getopt
@@ -61,21 +61,21 @@ def main(argv=None):
     try:
         optlist, args = getopt(argv[1:], "hc:s:p:d:t:nf:y")
     except:
-        print ""
-        print HELP_STRING
+        print("")
+        print(HELP_STRING)
         sys.exit(1)
 
     if len(optlist) == 0:
-        print ""
-        print HELP_STRING
+        print("")
+        print(HELP_STRING)
         sys.exit(1)
 
     for (opt, opt_arg) in optlist:
-        print opt
-        print opt_arg
+        print(opt)
+        print(opt_arg)
         if opt == '-h':
-            print ""
-            print HELP_STRING
+            print("")
+            print(HELP_STRING)
             sys.exit(1)
         elif opt == '-c':
             concatFileName = opt_arg
@@ -95,7 +95,7 @@ def main(argv=None):
             truncFlag = 1
 
     if concatFileName == "":
-        print HELP_STRING
+        print(HELP_STRING)
         sys.exit(1)
 
     # get lists from concat file
@@ -115,7 +115,7 @@ def main(argv=None):
     # create another list containing all possible oligo sequences
     oligoSeq = []
     for n in range(0, len(oligoNum)):
-        if oligoSeqD.has_key(oligoNum[n]):
+        if oligoNum[n] in oligoSeqD:
             oligoSeq.append(oligoSeqD[oligoNum[n]])
         else:
             oligoSeq.append('EMPTY')
@@ -179,8 +179,8 @@ def main(argv=None):
     # determine the number of spots per oligo
     numSpotsPerOligo = chipSingleconcUtils.calcNumSpotsPerOligo(
         spot2OligoFileName)
-    print "Number of oligos = " + str(numOligos)
-    print "Number of spots per oligo = " + str(numSpotsPerOligo)
+    print("Number of oligos = " + str(numOligos))
+    print("Number of spots per oligo = " + str(numSpotsPerOligo))
 
     # create a new directory to hold oligo analysis output
     dataDir = os.path.split(concatFileName)[0]

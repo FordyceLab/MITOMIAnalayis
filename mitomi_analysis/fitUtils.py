@@ -1,4 +1,4 @@
-from __future__ import division
+
 import os
 import numpy as N
 from matplotlib import pylab as plt
@@ -136,7 +136,7 @@ def gaussianFitHistogram(inputData, outFileName, dataName,
 
     f = os.popen('gnuplot', 'w')
     writeCommand = "load '"+outFileName[:-4]+".gnu'"
-    print >>f, writeCommand
+    print(writeCommand, file=f)
     f.flush()
 
 
@@ -203,7 +203,7 @@ def expFitHistogram(inputData, outFileName, dataName,
 
     f = os.popen('gnuplot', 'w')
     writeCommand = "load '"+outFileName[:-4]+".gnu'"
-    print >>f, writeCommand
+    print(writeCommand, file=f)
     f.flush()
 
 
@@ -265,7 +265,7 @@ def gnuplotFit(fitFileName):
 
     f = os.popen('gnuplot', 'w')
     writeCommand = "load '"+fitFileName[:-4]+".gnu'"
-    print >>f, writeCommand
+    print(writeCommand, file=f)
     f.flush()
 
 

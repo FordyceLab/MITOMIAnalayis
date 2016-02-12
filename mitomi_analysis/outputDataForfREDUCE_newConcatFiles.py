@@ -1,4 +1,4 @@
-from __future__ import division
+
 import sys
 import os
 from getopt import getopt
@@ -30,27 +30,27 @@ def main(argv=None):
     try:
         optlist, args = getopt(argv[1:], "hc:")
     except:
-        print ""
-        print HELP_STRING
+        print("")
+        print(HELP_STRING)
         sys.exit(1)
 
     if len(optlist) == 0:
-        print ""
-        print HELP_STRING
+        print("")
+        print(HELP_STRING)
         sys.exit(1)
 
     for (opt, opt_arg) in optlist:
-        print opt
-        print opt_arg
+        print(opt)
+        print(opt_arg)
         if opt == '-h':
-            print ""
-            print HELP_STRING
+            print("")
+            print(HELP_STRING)
             sys.exit(1)
         elif opt == '-c':
             cFN = opt_arg
 
     if cFN == "":
-        print HELP_STRING
+        print(HELP_STRING)
         sys.exit(1)
 
     curDir = os.path.split(cFN)[0] + '/'

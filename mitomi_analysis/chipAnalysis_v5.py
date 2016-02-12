@@ -55,21 +55,21 @@ def main(argv=None):
     try:
         optlist, args = getopt(argv[1:], "hc:p:d:t:j:k:s:")
     except:
-        print ""
-        print HELP_STRING
+        print("")
+        print(HELP_STRING)
         sys.exit(1)
 
     if len(optlist) == 0:
-        print ""
-        print HELP_STRING
+        print("")
+        print(HELP_STRING)
         sys.exit(1)
 
     for (opt, opt_arg) in optlist:
-        print opt
-        print opt_arg
+        print(opt)
+        print(opt_arg)
         if opt == '-h':
-            print ""
-            print HELP_STRING
+            print("")
+            print(HELP_STRING)
             sys.exit(1)
         elif opt == '-c':
             concatFileName = opt_arg
@@ -87,7 +87,7 @@ def main(argv=None):
             pYMin = int(opt_arg)
 
     if concatFileName == "":
-        print HELP_STRING
+        print(HELP_STRING)
         sys.exit(1)
 
     # get lists from concat file
@@ -98,7 +98,7 @@ def main(argv=None):
     numCols,
     spotsPerCol = chipSingleconcUtils.determineDimensions_v3(concatFileName)
 
-    print numCols, spotsPerCol
+    print(numCols, spotsPerCol)
     dimensions = (spotsPerCol, numCols)
 
     # create N.arrays to hold all of the data

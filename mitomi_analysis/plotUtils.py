@@ -383,7 +383,7 @@ def newCreateAndSaveMultilineFig(xDataList, yDataList, xLabel="", yLabel="",
 
     if legendFlag == 1:
         if legLoc != (0, 0):
-            print legLoc
+            print(legLoc)
             plt.legend(loc=legLoc)
         else:
             plt.legend()
@@ -540,7 +540,7 @@ def append_multiple_traces_to_graph(yValuesList, xValuesList):
     plotArgDict = create_multiple_trace_dict()
     listLen = len(yValuesList)
     if len(xValuesList) != listLen:
-        print "X and Y data are different lengths! User is a bozo!"
+        print("X and Y data are different lengths! User is a bozo!")
         pass
     else:
         for n in range(0, listLen):
@@ -879,7 +879,7 @@ def newLegend(*args, **kwargs):
     The args and kwargs are forwarded to the pylab legend function
     """
 
-    if kwargs.has_key('loc'):
+    if 'loc' in kwargs:
         loc = kwargs['loc']
         loc = loc.split()
         if loc[0] == 'outer':

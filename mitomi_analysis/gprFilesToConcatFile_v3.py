@@ -48,21 +48,21 @@ def main(argv=None):
     try:
         optlist, args = getopt(argv[1:], "hp:c:d:o:amRr")
     except:
-        print ""
-        print HELP_STRING
+        print("")
+        print(HELP_STRING)
         sys.exit(1)
 
     if len(optlist) == 0:
-        print ""
-        print HELP_STRING
+        print("")
+        print(HELP_STRING)
         sys.exit(1)
 
     for (opt, opt_arg) in optlist:
-        print opt
-        print opt_arg
+        print(opt)
+        print(opt_arg)
         if opt == '-h':
-            print ""
-            print HELP_STRING
+            print("")
+            print(HELP_STRING)
             sys.exit(1)
         elif opt == '-p':
             pFN = opt_arg
@@ -80,7 +80,7 @@ def main(argv=None):
             tbF = 1
 
     if pFN == "" or dFN == "" or cFN == "" or oFN == "":
-        print HELP_STRING
+        print(HELP_STRING)
         sys.exit(1)
 
     chipSingleconcUtils.concatGprFiles_v3(pFN, cFN, dFN, oFN,
