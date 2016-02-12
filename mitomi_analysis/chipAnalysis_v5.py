@@ -3,7 +3,7 @@ import os
 from getopt import getopt
 import chipSingleconcUtils
 import plotUtils
-from statistics import stats_utils
+import stats_utils
 import numpy as N
 from lab import tabbedfile
 from lab.tabbedfile import tabbifyMatrix
