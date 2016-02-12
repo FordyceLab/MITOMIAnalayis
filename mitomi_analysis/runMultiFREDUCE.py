@@ -2,7 +2,7 @@ from __future__ import division
 import sys
 import os
 from getopt import getopt
-from fileIOScripts import fileIOUtils
+import fileIOUtils
 import numpy as N
 
 HELP_STRING = """

@@ -3,11 +3,11 @@ import sys
 import os
 from getopt import getopt
 import chipSingleconcUtils
-from plotting import plotUtils
-from statistics import statsUtils
+import plotUtils
+import statsUtils
 import numpy as N
-from fileIOScripts import fileIOUtils
-from fitting import fitUtils
+import fileIOUtils
+import fitUtils
 from scipy import stats
 
 

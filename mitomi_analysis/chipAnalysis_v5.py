@@ -2,7 +2,7 @@ import sys
 import os
 from getopt import getopt
 import chipSingleconcUtils
-from plotting import plotUtils
+import plotUtils
 from statistics import stats_utils
 import numpy as N
 from lab import tabbedfile

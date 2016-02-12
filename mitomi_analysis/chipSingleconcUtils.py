@@ -1,8 +1,8 @@
 import numpy as N
 import types
-from plotting import plotUtils
-from statistics import statsUtils
-from fitting import fitUtils
+import plotUtils
+import statsUtils
+import fitUtils
 import operator
 from matplotlib import pylab as plt
 from scipy import stats
