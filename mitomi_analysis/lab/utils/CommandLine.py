@@ -143,7 +143,7 @@ class CommandLine:
     def execute( self ):
         """Basically this function just checks to see if any of the required arguments were not found. If that is the case, it outputs the usage method and exits the script."""
         if self.failed:
-            print self.usage + "\n"
+            print(self.usage + "\n")
             for default in self.defaults:
-                print default
+                print(default)
             sys.exit(0)

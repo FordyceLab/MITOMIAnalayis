@@ -9,12 +9,12 @@
 # 	$Id: __init__.py,v 1.3 2008/03/04 22:05:18 kael Exp $	
 ####################################################
 
-import commands
+import subprocess
 import datetime
 import re
 import os
 import types
-from Exceptions import *
+from .Exceptions import *
 
 class Qstat:
     """Container for qstat results.
@@ -44,13 +44,13 @@ class Qstat:
         """
 
         while retryAttempts >= 0:
-            s,o = commands.getstatusoutput("qstat")
+            s,o = subprocess.getstatusoutput("qstat")
             if s == 0:
                 break
             retryAttempts -= 1
 
         if retryAttempts < 0:
-            raise QStatFailureError, "call to qstat failed"
+            raise QStatFailureError("call to qstat failed")
 
         #reset everything
 
@@ -61,7 +61,7 @@ class Qstat:
                 if qMatch == None:
                     qMatch = self.runningRE.search(l)
                 if qMatch == None:
-                    raise QStatFailureError, ("unable to parse qstat line:\n%s"
+                    raise QStatFailureError("unable to parse qstat line:\n%s"
                                               % l)
                 f = qMatch.groups()
 
@@ -80,7 +80,7 @@ class Qstat:
                     tasks = (int(tasks),)
                 else:
                     tStart,tEnd,tStep = [int(x) for x in re.split('[-:]',tasks)]
-                    tasks = range(tStart,tEnd+1,tStep)
+                    tasks = list(range(tStart,tEnd+1,tStep))
                 
                 if len(f) == 9:
                     queue = f[-3]
@@ -110,7 +110,7 @@ class Qstat:
     def jobIDs(self):
         """return a list of all active jobIDs
         """
-        return self.jobs.keys()
+        return list(self.jobs.keys())
 
     def stateCount(self,state,jobs=None):
         """return a count of states aggregated over all jobs (default)
@@ -118,7 +118,7 @@ class Qstat:
 
         if jobs == None:
             jobs = self.jobIDs()
-        if type(jobs) not in (types.ListType, types.TupleType):
+        if type(jobs) not in (list, tuple):
             jobs = (jobs,)
         
         ct=0
@@ -164,7 +164,7 @@ class GridSubmission:
             self.command = command
 
         if self.command != None:
-            s,o = commands.getstatusoutput(self.command)
+            s,o = subprocess.getstatusoutput(self.command)
 
             if s == 0:
                 jtStr =  o.split()[2]
@@ -180,7 +180,7 @@ class GridSubmission:
                 else:
                     self.taskIDs = tuple()
             else:
-                raise GridRuntimeError, ("Grid submission failed: %s" %
+                raise GridRuntimeError("Grid submission failed: %s" %
                                          self.command)
 
             self.submitTime=datetime.datetime.now()
@@ -204,7 +204,7 @@ class GridSubmission:
         """Delete all the jobs spawned from the queue.
         """
         for j in self.allMyJobs:
-            commands.getstatusoutput("qdel %s" % j)
+            subprocess.getstatusoutput("qdel %s" % j)
         self.allMyJobs=[]
         
 

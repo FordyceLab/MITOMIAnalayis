@@ -24,16 +24,16 @@ rint = Async(rint)
 #
 a = rint("123")
 b = rint("metallica")
-print a
-print b.is_ready
-print a.result
-print a
+print(a)
+print(b.is_ready)
+print(a.result)
+print(a)
 
 #
 # and when an exception occurs, it looks like that
 #
 try:
-    print b.result
+    print(b.result)
 except ValueError:
     pass
 
@@ -47,11 +47,11 @@ except ValueError:
 # getting the async result, you can register a callback to collect it, when it arrives.
 #
 def f(res):
-    print "the result is",
+    print("the result is", end=' ')
     try:
-        print res.result
+        print(res.result)
     except:
-        print "an exception"
+        print("an exception")
 
 rint = Async(c.modules.__builtin__.int)
 
@@ -73,7 +73,7 @@ ar = rint.__str__
 # now we'll do some other request, which will cause the results to arrive, and the callback 
 # to be called. 
 #
-print c.modules.sys
+print(c.modules.sys)
 
 ############################################################################################
 #
@@ -101,8 +101,8 @@ time.sleep(5)
 #
 # and do some operation, which, along with it, will pull all incoming requests
 #
-print c.modules.sys
-print xxx
+print(c.modules.sys)
+print(xxx)
 
 #
 # and we can start a thread of our own to pull the requests in the background

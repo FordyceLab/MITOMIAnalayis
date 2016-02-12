@@ -90,7 +90,7 @@ class CompactSequence:
     def __init__(self,bases=[],qualityStr='',qualityCutoff=0):
         """bases can be a list of Base objects, or a string of [ACGT]s.
         """
-        self._seqBits=1L
+        self._seqBits=1
 
         if type(bases) == StringType:
             self.appendSeqStr(bases)
@@ -102,7 +102,7 @@ class CompactSequence:
         """Returns a bit mask of repeated 100 for the full length of the
         sequence.
         """
-        rv=1L
+        rv=1
         for n in range(len(self)):
             rv =  rv << 3 | AMBIGUOUS
         return rv
@@ -110,7 +110,7 @@ class CompactSequence:
     def nonAmbigBits(self):
         """Returns a mask of 1's in non-ambiguous positions.
         """
-        rv=1L
+        rv=1
         for b in self:
             if b.ambiguity() == True:
                 rv=rv << 3
@@ -122,7 +122,7 @@ class CompactSequence:
     def placeHolderMask(self):
         """Returns a bit mask of 100000...000.
         """
-        rv=1L
+        rv=1
         return rv << self._bitCount()-1
     
 
@@ -148,7 +148,7 @@ class CompactSequence:
         while len(bases) > 0:
             base=bases.pop(0)
             if not isinstance(base,Base):
-                raise ArgumentError, "% is not a base" % base
+                raise ArgumentError("% is not a base" % base)
             self._seqBits=self._seqBits << 3 | base._bits
 
 
@@ -201,7 +201,7 @@ class CompactSequence:
             base=Base(BASES[base])  # wow what unfortunate syntax!
 
         if not isinstance(base,Base):
-            raise ArgumentError, "% is not a base" % base
+            raise ArgumentError("% is not a base" % base)
         
         mask = 0
         mask = appendOnBits(mask,len(self)*3 +1) # all 1 mask
@@ -258,7 +258,7 @@ class CompactSequence:
         
         bases=list(self)
  
-        self._seqBits=1L
+        self._seqBits=1
         while len(bases) > 0:
             self._seqBits=self._seqBits << 3 | bases.pop(-1)._bits
         
@@ -291,14 +291,14 @@ class CompactSequence:
         
         rslt = self._seqBits ^ other._seqBits
 
-        if rslt == 0L:
+        if rslt == 0:
             return rslt
 
         if not ignoreN or (self.unambiquious() and other.unambiquious()):
             return rslt | self.placeHolderMask()
         else:
             rslt = rslt & self.nonAmbigBits() & other.nonAmbigBits()
-            if rslt == 0L:
+            if rslt == 0:
                 return rslt
             else:
                 return rslt | self.placeHolderMask()
@@ -310,7 +310,7 @@ class CompactSequence:
         count=0
 
         diffBits = self.compareWith(other,ignoreN=ignoreN)
-        if diffBits == 0L:
+        if diffBits == 0:
             return count
         
         mask=BASEMASK

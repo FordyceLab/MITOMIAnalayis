@@ -515,7 +515,7 @@ PROJECTS
 
 
 def doPrint(str):
-    print "\t", str
+    print("\t", str)
 
 
 

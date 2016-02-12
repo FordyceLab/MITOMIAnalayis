@@ -11,7 +11,7 @@
 #
 __version__ = "$Revision: 1.10 $"
 
-import nomad
+from . import nomad
 from geo.exceptions import *
 
 ALL_LINES = -1
@@ -45,7 +45,7 @@ class NCBIDataFile:
             name = "!" + name
 			
         # if this is the second value of this name, convert this name into a list
-        if name in self.params.keys():
+        if name in list(self.params.keys()):
 	    if type(self.params[name]) != LIST:
                 self.params[name] = [self.params[name], value]
             else:
@@ -76,7 +76,7 @@ class NCBIDataFile:
 
         lines.append("^" + self._fileType.upper() + "=" + self.id)
 	
-        for (name, value) in self.params.iteritems():
+        for (name, value) in self.params.items():
             if type(value) == LIST:
                 for subvalue in value:
                     lines.append(name + "=" + self._getValue(subvalue))
@@ -133,7 +133,7 @@ class NCBIDataFile:
         f.close()
 
     def confirmParam(self, name):
-        if not self.params.has_key(name):
+        if name not in self.params:
             raise NCBI_Attribute_Error(name + " must be set.")
 
     def getCustomParam(self, key):
@@ -292,7 +292,7 @@ class Family:
         self.sample = Sample("placeholder", platformID, plugin)
 
         self.series = Series(seriesID, self.arrays)
-        for (arrName, arr) in self.arrays.iteritems():
+        for (arrName, arr) in self.arrays.items():
             self.series.addParameter("!Series_sample_id", arrName)
 
     def getNomadArrays(self, arrayNames, experimentNames, projectNames):
@@ -348,16 +348,16 @@ class Family:
         # check that the arrays are the same platform.  In other words, each
         # id should be used once on each array.
         idCounts = {}
-        for array in self.arrays.values():
+        for array in list(self.arrays.values()):
             result = array.result()
             idlist = result.idList()
             for i in idlist:
-                if idCounts.has_key(i):
+                if i in idCounts:
                     idCounts[i] += 1
                 else:
                     idCounts[i] = 1
 
-        for i, num in idCounts.iteritems():
+        for i, num in idCounts.items():
             if num != len(self.arrays) and (i[0] != "EMPTY") and ("Y_" not in i[0]):
                 errStr = "WARNING: For ID %s, the count is %d instead of %d" % (i, num, len(self.arrays))
                 doPrint(errStr)
@@ -365,7 +365,7 @@ class Family:
 
     def setPlatformDataTable(self, headerNames, headerDesc, plugin):
         self.platform.setDataTable(headerNames, headerDesc, 
-        plugin.getSpotIterator(self.arrays.values()[0], headerNames))
+        plugin.getSpotIterator(list(self.arrays.values())[0], headerNames))
 
     def setSampleDataFields(self, headerNames, headerDesc, fieldNames):
         self.sample.setDataFields(headerNames, headerDesc, fieldNames)
@@ -382,7 +382,7 @@ class Family:
             doPrint("Creating platform file...")
             self.platform.dump(outfileName, numLines)
 
-        for (arrName, arr) in self.arrays.iteritems():
+        for (arrName, arr) in self.arrays.items():
             doPrint("Creating sample file for array:" + arrName)
             self.sample.setArray(arr, arrName)
             self.sample.dump(outfileName, numLines)
@@ -400,8 +400,8 @@ class SampleIterator:
     def __iter__(self):
         return self
 
-    def next(self):
-        spot = self.spots.next()
+    def __next__(self):
+        spot = next(self.spots)
         fields = []
         for field in self.field_names:
             if field == "ID_REF":
@@ -417,5 +417,5 @@ class SampleIterator:
 
 
 def doPrint(str):
-    print str            
+    print(str)            
 

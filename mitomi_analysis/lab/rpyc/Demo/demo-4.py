@@ -8,18 +8,18 @@ huge_xml = "<blah a='5' b='6'>   " * 50000 + "   </blah> " * 50000
 parseString = Async(c.modules.xml.dom.minidom.parseString)
 res = parseString(huge_xml)
 
-print "while we're waiting for the server to complete, we do other stuff"
+print("while we're waiting for the server to complete, we do other stuff")
 t = time.time()
 while not res.is_ready:
     time.sleep(0.5)
     # we dont want to use `c`, because it would block us (as the server is blocking)
     # but `c2` runs on another thread/process, so it wouldn't block
-    print c2.modules.os.getpid()
+    print(c2.modules.os.getpid())
 
 t = time.time() - t
-print "it took %d seconds" % (t,)
+print("it took %d seconds" % (t,))
 
-print res.result
+print(res.result)
 
 
 #

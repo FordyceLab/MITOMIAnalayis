@@ -50,11 +50,11 @@ def SW(s1,s2):
     """
 
     if type(s1) != StringType or type(s2) != StringType:
-        raise AttributeError, "s1  and s2 must be strings"
+        raise AttributeError("s1  and s2 must be strings")
         
     sLen = len(s1)
     if len(s2) != sLen:
-        raise SequenceLengthError, "s1 and s2 are different lengths."
+        raise SequenceLengthError("s1 and s2 are different lengths.")
 
     outBuffer =  ctypes.create_string_buffer(sLen*5)
 
@@ -96,10 +96,10 @@ def energy(s1,s2):
     """
 
     if type(s1) != StringType or type(s2) != StringType:
-        raise AttributeError, "s1  and s2 must be strings"
+        raise AttributeError("s1  and s2 must be strings")
 
     if len(s2) != len(s1):
-        raise SequenceLengthError, "s1 and s2 are different lengths."
+        raise SequenceLengthError("s1 and s2 are different lengths.")
 
     s2=sequence.reverse(s2)
 

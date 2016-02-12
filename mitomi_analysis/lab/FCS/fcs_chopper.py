@@ -1,6 +1,6 @@
 import sys
 from getopt import getopt
-import FCS3
+from . import FCS3
 
 USAGE = """
 FCS_Chopper [-dh] <-w window size> <-t threshold factor> <-s statistic> <file1, file2, ...>
@@ -22,7 +22,7 @@ where:
 try:
     optlist, fileNames = getopt(sys.argv[1:],'hdw:t:s:')
 except:
-    print USAGE
+    print(USAGE)
     sys.exit(2)
 
 DEBUG=False
@@ -32,7 +32,7 @@ thresholdFactor=None
 
 for opt,opt_arg in optlist:
     if opt == '-h':
-        print USAGE
+        print(USAGE)
         sys.exit(1)
         
     elif opt == '-d':
@@ -44,16 +44,16 @@ for opt,opt_arg in optlist:
             if windowSize < 1 or windowSize > 2000:
                 raise Exception
         except:
-            print "%s: bad window size (%s)" % (sys.argv[0],opt_arg)
-            print USAGE
+            print("%s: bad window size (%s)" % (sys.argv[0],opt_arg))
+            print(USAGE)
             sys.exit(2)
             
     elif opt == '-t':
         try:
             thresholdFactor = float(opt_arg)
         except:
-            print "%s: bad threshold factor (%s)" % (sys.argv[0],opt_arg)
-            print USAGE
+            print("%s: bad threshold factor (%s)" % (sys.argv[0],opt_arg))
+            print(USAGE)
             sys.exit(2)
     elif opt == '-s':
         try:
@@ -64,13 +64,13 @@ for opt,opt_arg in optlist:
             else:
                 raise Exception
         except:
-            print "%s: bad statistic (%s)" % (sys.argv[0],opt_arg)
-            print USAGE
+            print("%s: bad statistic (%s)" % (sys.argv[0],opt_arg))
+            print(USAGE)
             sys.exit(2)
 
 if windowSize == None or thresholdFactor == None or statistic == None:
-            print "%s: required parameter missing" % (sys.argv[0])
-            print USAGE
+            print("%s: required parameter missing" % (sys.argv[0]))
+            print(USAGE)
             sys.exit(2)
     
 
@@ -83,15 +83,15 @@ for fn in fileNames:
                                            windowSize=windowSize,
                                            thresholdFactor=thresholdFactor)
     fcsObj.displayParameters=['Time','FITC-A']
-    print fn
-    print fcsObj
+    print(fn)
+    print(fcsObj)
 
     if DEBUG:
-        print "Total Events:\t\t%s" % fcsObj.eventCount
-        print "Overall Average:\t%s" % fcsObj.median('FITC-A',unfiltered=True)
-        print "Threshold Factor:\t%s" % thresholdFactor
-        print "Window Size:\t\t%s" % windowSize
-        print "Final Event Count:\t%s" % finalCount
+        print("Total Events:\t\t%s" % fcsObj.eventCount)
+        print("Overall Average:\t%s" % fcsObj.median('FITC-A',unfiltered=True))
+        print("Threshold Factor:\t%s" % thresholdFactor)
+        print("Window Size:\t\t%s" % windowSize)
+        print("Final Event Count:\t%s" % finalCount)
         
 
     

@@ -14,10 +14,10 @@ import re
 import string
 import time
 import MySQLdb
-from kdbom import kdbom
+from .kdbom import kdbom
 import Numeric
 from math import ceil
-from Axon import ATF
+from .Axon import ATF
 
 
 # default NOMAD Connection
@@ -36,7 +36,7 @@ STR = type("")
 LIST = type([])
 DICT = type({})
 INT = type(1)
-LONG = type(1L)
+LONG = type(1)
 FLOAT = type(1.)
 TUPLE = type(())
 
@@ -87,7 +87,7 @@ def oligoMedianHistory_635(db,uid=None,resultIDs=(),whereClause=SPOTFLAG):
     # trap bad input
     if type(db) != INSTANCE or \
            db.__class__ != nomadDB:
-        raise TypeError, "Database must be an instance of NomadDB class"
+        raise TypeError("Database must be an instance of NomadDB class")
 
     rv = []
     for rID in resultIDs:
@@ -110,12 +110,12 @@ def printUIDs(db,printIDs=()):
     # trap bad input
     if type(db) != INSTANCE or \
            db.__class__ != nomadDB:
-        raise TypeError, "Database must be an instance of NomadDB class"
+        raise TypeError("Database must be an instance of NomadDB class")
 
     uidD = {}
     for pID in printIDs:
         resultIDs = printRun(db,pID).resultIDs()
-        for uid, count in resultUIDs(db,resultIDs).items():
+        for uid, count in list(resultUIDs(db,resultIDs).items()):
             if uid not in uidD:
                 uidD[uid] = 0
             uidD[uid] += count
@@ -132,7 +132,7 @@ def resultUIDs(db,resultIDs=()):
     # trap bad input
     if type(db) != INSTANCE or \
            db.__class__ != nomadDB:
-        raise TypeError, "Database must be an instance of NomadDB class"
+        raise TypeError("Database must be an instance of NomadDB class")
 
     uidD = {}
     for rID in resultIDs:
@@ -155,7 +155,7 @@ def elemID(db, UNIQUE_ID):
     # trap bad input
     if type(db) != INSTANCE or \
            db.__class__ != nomadDB:
-        raise TypeError, "Database must be an instance of NomadDB class"
+        raise TypeError("Database must be an instance of NomadDB class")
 
     UNIQUE_ID = re.sub('[\-\'\`\"\s]','',UNIQUE_ID)
     cur=db.con.cursor()
@@ -171,7 +171,7 @@ def elemID(db, UNIQUE_ID):
 def Rencode(params = {}):
     """Encode params in a dictionary for a call to an R object"""
     result = ''
-    for key in params.keys():
+    for key in list(params.keys()):
         if type(params[key])  == STR:
             #quote strings
             result = "%s, %s=\"%s\"" % (result, key, params[key])
@@ -268,7 +268,7 @@ class nomadDB (kdbom.db):
 
         # trap bad input
         if type(resultClass) != INT:
-            raise TypeError, "resultClass must be an integer"
+            raise TypeError("resultClass must be an integer")
 
         tblList = []
 
@@ -296,29 +296,29 @@ class array (kdbom.record):
         # trap bad input
         if type(db) != INSTANCE or \
                db.__class__ != nomadDB:
-            raise TypeError, "Database must be an instance of NomadDB class."
+            raise TypeError("Database must be an instance of NomadDB class.")
 
         if type(arrayName) != type('') and type(arrayName) != type(None):
-            raise TypeError, "arrayName must be a string."
+            raise TypeError("arrayName must be a string.")
 
         if type(arrayID) != type(1) and type(arrayID) != type(None):
-            raise TypeError, "arrayID must be a integer."
+            raise TypeError("arrayID must be a integer.")
 
         if arrayName != None:
             try:
                 arrayID = db.Array(Array_Name=arrayName)[0].Array_ID
-            except AttributeError,IndexError:
-                raise  NomadIndexError, "Array (%s) not found" % (arrayName)
+            except AttributeError as IndexError:
+                raise  NomadIndexError("Array (%s) not found" % (arrayName))
         try:
             kdbom.record.__init__(self,db['Array'],arrayID)
         except:
-            raise  NomadIndexError, "Array (%d) not found" % (arrayID)
+            raise  NomadIndexError("Array (%d) not found" % (arrayID))
 
     def result(self):
         try:
             resultID = self.children(self.db.Array_Result)[0].Result_ID
         except:
-            raise  NomadIndexError, "Result for Array (%s) not found" % (self.Array_Name)
+            raise  NomadIndexError("Result for Array (%s) not found" % (self.Array_Name))
 
         return result(self.db, resultID)
 
@@ -326,7 +326,7 @@ class array (kdbom.record):
         try:
             resultID = self.children(self.db.Array_Result)[0].Result_ID
         except:
-            raise  NomadIndexError, "Result for Array (%s) not found" % (self.Array_Name)
+            raise  NomadIndexError("Result for Array (%s) not found" % (self.Array_Name))
         return resultID
 
 
@@ -367,7 +367,7 @@ class result (kdbom.record):
         # trap bad input
         if type(db) != INSTANCE or \
                db.__class__ != nomadDB:
-            raise TypeError, "Database must be an instance of NomadDB class"
+            raise TypeError("Database must be an instance of NomadDB class")
 
 
         # results are really records in the
@@ -376,7 +376,7 @@ class result (kdbom.record):
         try:
             kdbom.record.__init__(self,db['Result'],resultID)
         except AttributeError:
-            raise  NomadIndexError, "data for Result_ID(%s) not found" % (resultID)
+            raise  NomadIndexError("data for Result_ID(%s) not found" % (resultID))
 
         self.resultID = resultID
 
@@ -417,7 +417,7 @@ class result (kdbom.record):
         elif (self.blockCount == 48):
             self.rowsOfBlocks = 12
         else:
-            raise NomadDataError, "Number of blocks in array (%s )is weird" % (self.blockCount)
+            raise NomadDataError("Number of blocks in array (%s )is weird" % (self.blockCount))
 
 
 
@@ -448,7 +448,7 @@ class result (kdbom.record):
         rslt = cur.fetchone()
 
         if rslt == None:
-            raise NomadIndexError, "data for Result_ID(%s) not found" % (self.resultID)
+            raise NomadIndexError("data for Result_ID(%s) not found" % (self.resultID))
         else:
             return rslt[0]
 
@@ -475,8 +475,8 @@ class result (kdbom.record):
                     (self.dataTableName,self.resultID))
         rslt = cur.fetchone()
         if rslt == None:
-            raise NomadIndexError, "data for Result_ID(%s) not found in NOMAD.%s" \
-                  % (self.resultID,self.dataTableName)
+            raise NomadIndexError("data for Result_ID(%s) not found in NOMAD.%s" \
+                  % (self.resultID,self.dataTableName))
         else:
             return rslt[0]
 
@@ -488,8 +488,8 @@ class result (kdbom.record):
                     (self.dataTableName,self.resultID))
         rslt = cur.fetchone()
         if rslt == None:
-            raise NomadIndexError, "data for Result_ID(%s) not found in NOMAD.%s" \
-                  % (self.resultID,self.dataTableName)
+            raise NomadIndexError("data for Result_ID(%s) not found in NOMAD.%s" \
+                  % (self.resultID,self.dataTableName))
         else:
             return rslt[0]
 
@@ -502,8 +502,8 @@ class result (kdbom.record):
                     (self.dataTableName,self.resultID))
         rslt = cur.fetchone()
         if rslt == None:
-            raise NomadIndexError, "data for Result_ID(%s) not found in NOMAD.%s" \
-                  % (self.resultID,self.dataTableName)
+            raise NomadIndexError("data for Result_ID(%s) not found in NOMAD.%s" \
+                  % (self.resultID,self.dataTableName))
         else:
             return rslt[0]
 
@@ -571,7 +571,7 @@ class result (kdbom.record):
         try:
             import dislin
         except:
-             raise NomadExternalProgram_Error, "Can't find 'dislin' graphics library."
+             raise NomadExternalProgram_Error("Can't find 'dislin' graphics library.")
             
 
         if not self.__Geometry:
@@ -649,7 +649,7 @@ class result (kdbom.record):
         try:
             from disipyl import plots, contours, pxdislin,pydislin
         except:
-             raise NomadExternalProgram_Error, "Can't find 'disipyl' graphics library."
+             raise NomadExternalProgram_Error("Can't find 'disipyl' graphics library.")
          
         if not self.__Geometry:
             self.__getGeometry__()
@@ -798,7 +798,7 @@ class result (kdbom.record):
             import Gnuplot
         except:
             pass
-            raise NomadExternalProgram_Error, "Can't work with Gnuplot."
+            raise NomadExternalProgram_Error("Can't work with Gnuplot.")
         
         if not map:
             data,mapMin,mapMax = self.arrayMap(feature=feature)
@@ -826,7 +826,7 @@ class result (kdbom.record):
                 if pctClipTop != None:
                     clippingTxt.append('top %4.1f%% of spots clipped ' % float(pctClipTop))
                     clipN = int(float(pctClipTop)/100.0 * float(n))
-                    print n, clipN
+                    print(n, clipN)
                     Zmax = tempVector[orderedIndicies[-clipN+1]]
                     for i in range(-clipN,-1):
                         tempVector[orderedIndicies[i]] = Zmax
@@ -855,7 +855,7 @@ class result (kdbom.record):
 
         gp("set pm3d map")
 
-        gpdata = Gnuplot.GridData(data,range(1,Xmax+1),range(1,Ymax+1),inline=True)
+        gpdata = Gnuplot.GridData(data,list(range(1,Xmax+1)),list(range(1,Ymax+1)),inline=True)
 
         gp("set key off")
         gp('set title "%s"' % (title))
@@ -886,7 +886,7 @@ class result (kdbom.record):
         gp.splot(gpdata)
 
         if fileName == None:
-            raw_input("press key to continue...")
+            input("press key to continue...")
         elif show:
             del gp
             os.system("display %s" % fileName)
@@ -899,7 +899,7 @@ class result (kdbom.record):
         try:
             import Gnuplot
         except:
-            raise NomadExternalProgram_Error, "Can't work with gnuplot."
+            raise NomadExternalProgram_Error("Can't work with gnuplot.")
 
         if not xlab:
             xlab = x
@@ -954,7 +954,7 @@ class result (kdbom.record):
             from rpy import r
             #uselessOutput = r.library('fields')
         except:
-            raise NomadR_Error, "Can't work with R."
+            raise NomadR_Error("Can't work with R.")
         
         if not map:
             map = self.arrayMap(feature=feature)
@@ -992,7 +992,7 @@ class result (kdbom.record):
             from rpy import r
             r.graphics_off()
         except:
-            raise NomadR_Error, "Can't work with R."
+            raise NomadR_Error("Can't work with R.")
 
         if not title:
             title=self.array.Array_Name
@@ -1027,9 +1027,9 @@ class result (kdbom.record):
 
         if (type(features) != LIST and type(features) != TUPLE )\
                or len(features) < 1:
-            raise TypeError, "features must be a list or tuple."
+            raise TypeError("features must be a list or tuple.")
 
-        f_range = range(len(features))
+        f_range = list(range(len(features)))
         
         # build SQL
         SQLfields = ' `' + string.join(features,'`, `') + '` '
@@ -1068,7 +1068,7 @@ class result (kdbom.record):
         
     def features(self, range = None, min=None, max=None):
         pass
-        return self.db[self.dataTableName].fields.keys()
+        return list(self.db[self.dataTableName].fields.keys())
         
 
     def getArray (self):
@@ -1406,9 +1406,9 @@ class result (kdbom.record):
                 rObj.dataLines.append(ATF.DataRecord(rObj,
                                                      dataDict = self.GPRData(spot)))
             except:
-                print self.GPRData(spot)
-                print spot
-                raise NomadConversionError, "Can't convert NOMAD spot to a Genepix Result data record."
+                print(self.GPRData(spot))
+                print(spot)
+                raise NomadConversionError("Can't convert NOMAD spot to a Genepix Result data record.")
         rObj.rebuildIndexes()
         return rObj
         
@@ -1425,7 +1425,7 @@ class printRun (kdbom.record):
         # trap bad input
         if type(db) != INSTANCE or \
                db.__class__ != nomadDB:
-            raise TypeError, "Database must be an instance of NomadDB class"
+            raise TypeError("Database must be an instance of NomadDB class")
 
         kdbom.record.__init__(self,table=db.Print, PKvalue = printID)
         self.printID = printID

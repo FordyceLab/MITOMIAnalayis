@@ -23,7 +23,7 @@ c.modules.sys.stdout = c.modules.sys.__stdout__
 # anyway, the `execute` method runs the given code at the other side of the connection
 # and works in the `namespace` dict. what?
 c.execute("x = [1,2,3]")
-print c.namespace.x
+print(c.namespace.x)
 
 # now it makes sense, doesn't it? the 'namespace' attribute is something i called 
 # AttrFrontend -- it wraps a dict with the attribute protocol, so you can access
@@ -32,7 +32,7 @@ print c.namespace.x
 # altering the namespace directly also affects it:
 c.namespace.x.append(4)
 c.execute("x.append(5)")
-print c.namespace.x
+print(c.namespace.x)
 
 # but you should not assign complex objects (not int/float/str, etc) to this namespace
 # directy, or NetProxies will be created. there's nothing wrong with that, but keep
@@ -46,10 +46,10 @@ print c.namespace.x
 # for example:
 
 # this will print None
-print c.execute("1+2")
+print(c.execute("1+2"))
 
 # while this will print 3
-print c.execute("1+2", "eval")
+print(c.execute("1+2", "eval"))
 
 # but there's a time in a man's life when he asks himself, why the heck? you can, as i 
 # showed in other places, just do this:
@@ -92,7 +92,7 @@ def my_thread_func(callback):
 """)
 
 def callback(timestamp):
-    print "the timestamp is", timestamp
+    print("the timestamp is", timestamp)
 
 c.modules.thread.start_new_thread(c.namespace.my_thread_func, (callback,))
 c.modules.time.sleep(5)

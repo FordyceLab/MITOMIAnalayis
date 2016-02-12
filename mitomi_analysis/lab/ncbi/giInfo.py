@@ -11,12 +11,12 @@
 
 import os, sys, re
 import time
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from utils import unique
 from kdbom import kdbom
 
-from __init__ import ncbiDB, throttleRequest, esummary,getTaxa
+from .__init__ import ncbiDB, throttleRequest, esummary,getTaxa
 
 ## NCBI_GI_INFO_URL = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=CoreNucleotide"
 ## MAX_GIS_PER_REQUEST = 100
@@ -51,14 +51,14 @@ def cacheBlastSearch( search ):
                 LEFT JOIN Search ON Hit.Search_ID = Search.Search_ID
             WHERE Search.Search_ID=%d""" % ( search.ID() )
 
-    nameList = map( lambda x: x[0], ncbiDB.fetchall( sql ) )
+    nameList = [x[0] for x in ncbiDB.fetchall( sql )]
 
     for name in nameList:
         hasGi = re.search("gi\|(\d+)\|", name)
         if hasGi:
             giList[ hasGi.group(1) ] = 1
 
-    fastHitGiInfo( map(int, giList.keys() ) )
+    fastHitGiInfo( list(map(int, list(giList.keys()) )) )
     return
     
 
@@ -148,7 +148,7 @@ def insertGiInfo(giList,dontTouchDB=False):
     """
     gbSummaries=esummary("CoreNucleotide",giList)
 
-    taxIDs = unique([int(r['TaxId']) for r in gbSummaries.values() if int(r['TaxId'])>0])
+    taxIDs = unique([int(r['TaxId']) for r in list(gbSummaries.values()) if int(r['TaxId'])>0])
     taxaList=getTaxa(taxIDs)
     taxa={}
     for t in taxaList:
@@ -158,7 +158,7 @@ def insertGiInfo(giList,dontTouchDB=False):
     failures={}
     rows = []
     liveGis = []
-    for gi in gbSummaries.keys():
+    for gi in list(gbSummaries.keys()):
         gis = gbSummaries[gi]
         try:
             status = gis['Status']
@@ -205,7 +205,7 @@ def insertGiInfo(giList,dontTouchDB=False):
                 matches[0].touchTimestamp()
                 continue
             if len(matches) > 1:
-                raise GiInfoAmbiguityError, "failed updating timestamp - more that one match"
+                raise GiInfoAmbiguityError("failed updating timestamp - more that one match")
 
         row = (int(gi),
                title,
@@ -226,7 +226,7 @@ def insertGiInfo(giList,dontTouchDB=False):
         # so we have to do it one at a time
     for row in rows:
         if dontTouchDB:
-            print row
+            print(row)
 
         else:
             GiInfo._table.insertMany(('Gi','Title','Tax_ID','Length',

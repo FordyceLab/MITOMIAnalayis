@@ -12,7 +12,7 @@
 import sys, os
 import tempfile
 import math
-import commands
+import subprocess
 
 from grid.GridThreads import *
 from sequence import fasta
@@ -37,14 +37,14 @@ def parseM8( m8File, oneHspPerHit ):
     results = []
     for line in open( m8File, 'r' ):
         data = line.split()
-        results.append( dict( zip( m8, data ) ) )
+        results.append( dict( list(zip( m8, data )) ) )
 
     if oneHspPerHit:
         results.sort( cmp=lambda x,y: cmp( x["score"], y["score"] ) )
         resultHash = {}
         for r in results:
             resultHash[ (r["name"],r["hit"]) ] = r
-        return resultHash.values()
+        return list(resultHash.values())
     else:
         return results
 
@@ -117,7 +117,7 @@ class GridBlast ( GridThreadManager ):
         if isinstance( parameters, str ):
             blastLine = blastLine + " " + parameters
         else:
-            parameterStrings = map( lambda x: "-%s %s" % ( x, parameters[x] ), parameters.keys() )
+            parameterStrings = ["-%s %s" % ( x, parameters[x] ) for x in list(parameters.keys())]
             blastLine = blastLine + " " + " ".join( parameterStrings )
 
         threads = []
@@ -169,8 +169,8 @@ class GridBlast ( GridThreadManager ):
         if not self.success():
             return False
 
-        sourceFiles = map( lambda x: x[1], self.activeQueries )
-        ( status, output ) = commands.getstatusoutput("cat " + " ".join( sourceFiles ) + " > " + filename)
+        sourceFiles = [x[1] for x in self.activeQueries]
+        ( status, output ) = subprocess.getstatusoutput("cat " + " ".join( sourceFiles ) + " > " + filename)
         if status != 0:
             return False
         return True
@@ -202,7 +202,7 @@ class GridBlast ( GridThreadManager ):
         return blast.insertBlastResults( self.dbPath,
                                          faFile,
                                          self.parameters,
-                                         map( lambda x: x[1], self.activeQueries ),
+                                         [x[1] for x in self.activeQueries],
                                          dbDescription,
                                          qryDescription,
                                          largeDb=largeDb,
@@ -229,7 +229,7 @@ class GridBlast ( GridThreadManager ):
 
         for ( thread, outfile ) in self.activeQueries:
             for line in open( outfile, "r" ):
-                yield dict( zip( m8, line.split() ) )
+                yield dict( list(zip( m8, line.split() )) )
 
 
 class GridMegaBlast ( GridBlast ):
@@ -267,10 +267,10 @@ class GridMegaBlast ( GridBlast ):
         if not self.success():
             return False
 
-        sourceFiles = map( lambda x: x[1], self.activeQueries )
+        sourceFiles = [x[1] for x in self.activeQueries]
         for fn in sourceFiles:
-            ( status, output ) = commands.getstatusoutput("tail -1 %s | grep -q '^#Mega BLAST run finished'" % fn)
+            ( status, output ) = subprocess.getstatusoutput("tail -1 %s | grep -q '^#Mega BLAST run finished'" % fn)
             if status != 0:
-                raise GridBlastError, "output in %s is incomplete"
+                raise GridBlastError("output in %s is incomplete")
 
         return self.saveBlastResults(filename)

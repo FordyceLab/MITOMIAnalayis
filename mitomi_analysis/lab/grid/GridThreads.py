@@ -21,14 +21,14 @@
 
 import os, sys
 import threading
-import commands
+import subprocess
 import datetime
 import time
 import random
 import re
 import copy
 import cmd
-from Exceptions import *
+from .Exceptions import *
 
 ###############################
 # Settings
@@ -69,7 +69,7 @@ class GridThreadManager:
 
     def __getitem__( self, threadName ):
         """Accesses the internal dict of GridThread onjects."""
-        if self.threads.has_key( threadName ):
+        if threadName in self.threads:
             return self.threads[ threadName ]
         raise InvalidArgumentError("Unable to find specified thread: %s." % threadName )	
 
@@ -138,10 +138,10 @@ class GridThreadManager:
         try:
             for name in self.threads:
                 self.threads[name].check( )
-        except GridThreadError, e:
+        except GridThreadError as e:
             self.log( "Error raised: %s" % e, 3 )
             if interactive:
-                print "Error: %s" % e
+                print("Error: %s" % e)
                 self.manageThreads()
             raise
 
@@ -163,7 +163,7 @@ class GridThreadManager:
         as this will never evaluate to true if something goes wrong in
         a thread or job."""
 
-        for thrd in self.threads.values():
+        for thrd in list(self.threads.values()):
             if not thrd.success():
                 return False
         return True
@@ -302,7 +302,7 @@ class GridThreadManager:
         """Returns a list of the names of all threads currently running
         on the cluster."""
         self.updateQStat()
-        return map( lambda x: x[0], self.qstat )
+        return [x[0] for x in self.qstat]
 
     def getOutput( self, threadName ):
         """Given the name of a previously submitted thread, returns the output
@@ -329,7 +329,7 @@ class GridThreadManager:
         retriesLeft = 100
         while retriesLeft > 0:
 
-            failed, data = commands.getstatusoutput( os.path.join( self.qPath, "qstat" ) )
+            failed, data = subprocess.getstatusoutput( os.path.join( self.qPath, "qstat" ) )
 
             if failed:
                 retriesLeft -= 1
@@ -381,7 +381,7 @@ class GridThreadManager:
         """Returns a list of the names of all threads spawned from
         this manager."""
 
-        return self.threads.keys()
+        return list(self.threads.keys())
 
 
 class GridThread( threading.Thread ):
@@ -407,17 +407,17 @@ class GridThread( threading.Thread ):
             self.jobs.append( GridJob( command, self, self.qPath ) )
         # Each element of argList is a string =>
         #               Run command once for each string.
-        elif not ( False in map( lambda x: isinstance( x, str ), argList )):
+        elif not ( False in [isinstance( x, str ) for x in argList]):
             for args in argList:
                 self.jobs.append( GridJob( command % (args), self, self.qPath ) )
         # Each element of argList is a list of strings =>
         #               Run command once for each set of arguments.
-        elif not ( False in map( lambda x: isinstance( x, (list,tuple) ), argList )):
+        elif not ( False in [isinstance( x, (list,tuple) ) for x in argList]):
             for args in argList:
                 self.jobs.append( GridJob( command % tuple(args), self, self.qPath ) )
         # Each element of argList is a GridJob =>
         #               Import them all directly and continue.
-        elif not ( False in map( lambda x: isinstance( x, (GridJob) ), argList )):
+        elif not ( False in [isinstance( x, (GridJob) ) for x in argList]):
             self.jobs = argList
         # Otherwise, the argList and/or command was specified incorrectly.
         else:
@@ -589,7 +589,7 @@ class GridThread( threading.Thread ):
     def getProgress( self ):
         """Returns the progress of the thread through its job list.
         ( # jobs completed / total # jobs )"""
-        return float( sum( map( lambda x: x.finished and 1 or 0, self.jobs ) ) ) / float( len( self.jobs ) )
+        return float( sum( [x.finished and 1 or 0 for x in self.jobs] ) ) / float( len( self.jobs ) )
 
     def progressString( self ):
         """Returns a pretty string representing the progress of
@@ -597,7 +597,7 @@ class GridThread( threading.Thread ):
 
         prog = self.getProgress() * 100.0
         total = len( self.jobs )
-        done = sum( map( lambda x: x.finished and 1 or 0, self.jobs ) )
+        done = sum( [x.finished and 1 or 0 for x in self.jobs] )
         return "%.2f%% (%d/%d)" % (prog, done, total)
 
     def getOutput( self ):
@@ -605,7 +605,7 @@ class GridThread( threading.Thread ):
         in the form of a list of strings. Jobs which have not yet
         been completed will return None as their output."""
 
-        return map( lambda x: x.getOutput(), self.jobs )
+        return [x.getOutput() for x in self.jobs]
 
     def getBrokenJob( self ):
         """Returns the last job that caused an exception."""
@@ -641,7 +641,7 @@ class GridThread( threading.Thread ):
         what you are doing."""
 
         self.signalStop()
-        ( status, output ) = commands.getstatusoutput( "qdel %s" % self.getName() )
+        ( status, output ) = subprocess.getstatusoutput( "qdel %s" % self.getName() )
         if status:
             raise ThreadControlError( "Unable to kill thread %s. (status %d)" % ( self.getName(), status ) )
         self.log("Successfully killed self.", 3)
@@ -691,7 +691,7 @@ class GridJob:
         
         cmd = "%s -nostdin -now no -N %s %s \'%s; echo \"%s\"\'" % ( qrshPath, name, extraArgs, self.command, "|%s|$?|%s|" % (name, name) )
         self.log("Running command. (%s)" % cmd,3 )
-        ( self.qrshStatus, output ) = commands.getstatusoutput( cmd )
+        ( self.qrshStatus, output ) = subprocess.getstatusoutput( cmd )
         self.log("Command completed, extracting output and status.",3)
         self.log("Raw Output: |||||%s||||||" % output, 3 )
         matches = re.search("^(.*)\|%s\|(\d+)\|%s\|(.*)" % (name,name), output, re.DOTALL )
@@ -796,10 +796,10 @@ class GridThreadControl( threading.Thread, cmd.Cmd ):
 
     def help_resume( self ):
         """Returns control to the GridThreadManager"""
-        print """
+        print("""
                 resume:
                     Returns control to the GridThreadManager
-                    """
+                    """)
 
     def do_print( self, args ):
         """Prints information about [A]ll work in the specified object."""
@@ -809,34 +809,34 @@ class GridThreadControl( threading.Thread, cmd.Cmd ):
             args = args.replace("-i","")
             hideSuccessful = True
 
-        print
+        print()
         self.printObj( args, hideSuccessful )
         return False
 
     def help_print( self ):
         """Prints information about [A]ll work in the specified object."""
-        print """
+        print("""
                 print [-i] [thread] [jobNum]:
                     Prints information about the specified object.
                     Options:
                         -i: restricts the output to jobs or threads which are incomplete.
-                        """
+                        """)
 
     def do_kill( self, args ):
         """Kills the specified thread."""
         arg = args.strip()
         if arg == "":
-            print "Please specify a thread name."
+            print("Please specify a thread name.")
             return False
         self.manager.killThread( arg )
         return False
 
     def help_kill( self ):
         """Kills the specified thread."""
-        print """
+        print("""
                 kill thread:
                     Kills the specified thread.
-                    """
+                    """)
 
     def do_restart( self, args ):
         """Restarts the specified thread. If jobNum is specified, execution begins there."""
@@ -844,7 +844,7 @@ class GridThreadControl( threading.Thread, cmd.Cmd ):
         argList = args.strip().split()
 
         if len( argList ) == 0:
-            print "Invalid arguments."
+            print("Invalid arguments.")
             return False
         
         jobToStartOn = None
@@ -852,17 +852,17 @@ class GridThreadControl( threading.Thread, cmd.Cmd ):
             try:
                 jobToStartOn = int( argList[1] )
             except ValueError:
-                print "Please specify an integer value for Job ID."
+                print("Please specify an integer value for Job ID.")
                 return False
         
         self.manager.restartThread( argList[0], startAtJobN=jobToStartOn )
 
     def help_restart( self ):
         """Restarts the specified thread. If jobID is specified, execution begins there."""
-        print """
+        print("""
                 restart thread [jobID]:
                     Restarts the specified thread. If jobNum is specified, execution begins there.
-                    """
+                    """)
         
     def do_quit( self, args ):
         """Calls system.exit() in the control thread, killing the GridThreadManager."""
@@ -872,11 +872,11 @@ class GridThreadControl( threading.Thread, cmd.Cmd ):
 
     def help_quit( self ):
         """Calls system.exit() in the control thread, killing the GridThreadManager."""
-        print """
+        print("""
                 quit:
                     Calls system.exit() in the control thread, killing the GridThreadManager.
                     It will attempt to kill the child threads, but this is not guaranteed to work.
-                    """
+                    """)
 
     def do_exit( self, args ):
         """Calls system.exit() in the control thread, killing the GridThreadManager."""
@@ -886,11 +886,11 @@ class GridThreadControl( threading.Thread, cmd.Cmd ):
 
     def help_exit( self ):
         """Calls system.exit() in the control thread, killing the GridThreadManager."""
-        print """
+        print("""
                 exit:
                     Calls system.exit() in the control thread, killing the GridThreadManager.
                     It will attempt to kill the child threads, but this is not guaranteed to work.
-                    """
+                    """)
     
 
     def printObj( self, args, hideSuccessful ):
@@ -899,24 +899,24 @@ class GridThreadControl( threading.Thread, cmd.Cmd ):
 
 	argList = args.strip().split()
 	if len( argList ) == 0:
-		print self.manager.getStr( hideSuccessful )
+		print(self.manager.getStr( hideSuccessful ))
 	if len( argList ) >= 1:
-		if self.manager.threads.has_key( argList[0] ):
+		if argList[0] in self.manager.threads:
 			thrd = self.manager.threads[ argList[0] ]
 			if len( argList ) == 1:
-				print thrd.getStr( hideSuccessful )
+				print(thrd.getStr( hideSuccessful ))
 			if len( argList ) == 2:
 				try:
 					jobNum = int( argList[1] )
 				except ValueError:
-					print "Job ID must be an integer. Please check your input"
+					print("Job ID must be an integer. Please check your input")
 					return
 				if jobNum >= len( thrd.jobs ) or jobNum < 0:
-					print "Unable to locate this job. Please check your input"
+					print("Unable to locate this job. Please check your input")
 					return
-				print thrd.jobs[ jobNum ]
+				print(thrd.jobs[ jobNum ])
 		else:
-			print "Unable to locate thread %s. Please check your spelling." % argList[0]			
+			print("Unable to locate thread %s. Please check your spelling." % argList[0])			
 
 
 ################################################################
@@ -927,7 +927,7 @@ if __name__ == "__main__":
     gtm.submitThread("ls %s", [ "/nfs/sumo/home/dale/", "/nfs/sumo/home/kael/", "/nfs/sumo/home/amy/" ] )
     gtm.submitThread("pwd")
     gtm.submitThread("ls")
-    gtm.submitThread("sleep %s", map( lambda x: str(x), range(0,4,2) ) )
+    gtm.submitThread("sleep %s", [str(x) for x in range(0,4,2)] )
     gtm.submitThread("du -sh %s", ( "/sumo/home/dale/polioChip/", "/sumo/home/dale/shotgun/" ), name="du" )
     gtm.submitThread("ls -l %s", ("/sumo/home/dale/", "blah1", "blah2", "/sumo/home/dale/" ), name="badLS")
     #gtm.submitThread("sleep 9999", name="sleepy1", qrshArgs="-l hostname=SecondLife-20")
@@ -939,15 +939,15 @@ if __name__ == "__main__":
     #for i in range( 100 ):
     #    gtm.submitThread("sleep %s", map( lambda x: str( (x % 2) + 0), range(i) ))
 
-    print gtm["du"]
-    print gtm["du"][0]
+    print(gtm["du"])
+    print(gtm["du"][0])
 
     while not gtm.success():
     	try:
         	gtm.wait( interval=10, maxWaitTime=480, interactive=True )
-    	except GridRuntimeError, err:
-        	print err
+    	except GridRuntimeError as err:
+        	print(err)
         	bt = gtm.brokenThread
-		print bt
+		print(bt)
         	gtm.restartBrokenThread(startAtLastUnfinishedJob=True)
     

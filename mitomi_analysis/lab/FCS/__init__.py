@@ -143,9 +143,9 @@ class FCS:
             numTypeCode='d'
             expectedBits = 64
         elif self.dataType == 'A':
-            raise Exception, "ASCII data encoding not supported"
+            raise Exception("ASCII data encoding not supported")
         else:
-            raise Exception, "Data encoding not understood"
+            raise Exception("Data encoding not understood")
 
         # check the # of parameter bits and
         # initilize parameter,range and gain lists
@@ -160,7 +160,7 @@ class FCS:
             
             bitCount=int(self.text['$P%sB'%n].rstrip().lstrip())
             if bitCount != expectedBits:
-                raise Exception, "Parameter '%s' has the wrong number of bits." % paramStr
+                raise Exception("Parameter '%s' has the wrong number of bits." % paramStr)
 
             paramMax = int(self.text['$P%sR'%n].rstrip().lstrip())
             self.ranges.append(paramMax)
@@ -173,23 +173,23 @@ class FCS:
             
         # get the DATA
         if self.text['$MODE'].rstrip().lstrip() != 'L':
-            raise Exception, "Only LIST format data supported"
+            raise Exception("Only LIST format data supported")
         
         self.dataStart = int(self.text['$BEGINDATA'].rstrip().lstrip())
         self.dataEnd = int(self.text['$ENDDATA'].rstrip().lstrip())
         f.seek(self.dataStart)
         DATA=f.read(1+self.dataEnd-self.dataStart)
         data=fromstring(DATA,numTypeCode)
-        print shape(data)
+        print(shape(data))
         self.originalData=data.resize((self.eventCount,self.paramCount))
-        print shape(self.originalData)
-        print self.eventCount,self.paramCount
+        print(shape(self.originalData))
+        print(self.eventCount,self.paramCount)
         # system dependant byte order 
         self.dataLittleEndian = self.text['$BYTEORD'].startswith('1')
         machineLittleEndian = LittleEndian
         if machineLittleEndian != self.dataLittleEndian:
             self.originalData = self.originalData.byteswapped()
-            print 'bytes swapped'
+            print('bytes swapped')
 
         # apply $PnG gain/scale factors
         scaleMat = array(self.gains*self.eventCount,typecode='d')
@@ -446,7 +446,7 @@ class FCS:
         """
 
         if metric != MEDIAN and metric != MEAN:
-            raise ValueError, "metric unknown"
+            raise ValueError("metric unknown")
 
         fEventCount = shape(self.filteredData)[0]
         if windowSize == None:
@@ -472,7 +472,7 @@ class FCS:
                 else:
                     windowM = mean(values[start:end])
                 if windowM >= overallM * thresholdFactor:
-                    put(mask,range(start,end),[1]*windowSize)
+                    put(mask,list(range(start,end)),[1]*windowSize)
                     
         return self.maskEvents(mask)
                
@@ -499,7 +499,7 @@ if __name__ == '__main__':
     f = file('D:/Documents and Settings/kael/Desktop/specimen_001/tube_001.fcs','rb')
     fcs=FCS()
     fcs.parseFCSfile()
-    print fcs.ranges
+    print(fcs.ranges)
     #print Numeric.shape(fcs.parameterMatrix('Time','FITC-A'))
     fcs.imshow('Time','FITC-A')
     

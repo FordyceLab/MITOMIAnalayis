@@ -33,7 +33,7 @@ class ImmDict(object):
     def __init__(self, dict):
         self.dict = dict
     def items(self):
-        return self.dict.items()
+        return list(self.dict.items())
 
 def _get_dict(obj):
     return object.__getattribute__(obj, "____dict__")
@@ -57,14 +57,14 @@ class AttrFrontend(object):
     __setattr__ = __setitem__
 
     def __repr__(self):
-        return "<AttrFrontend(%s)>" % (", ".join(_get_dict(self).keys()),)
+        return "<AttrFrontend(%s)>" % (", ".join(list(_get_dict(self).keys())),)
 
 
 def rpyc_excepthook(exctype, value, traceback):
     if hasattr(value, "_remote_traceback"):
-        print >> stderr, "======= Remote traceback ======="
-        print >> stderr, value._remote_traceback
-        print >> stderr, "======= Local exception ======="
+        print("======= Remote traceback =======", file=stderr)
+        print(value._remote_traceback, file=stderr)
+        print("======= Local exception =======", file=stderr)
         orig_excepthook(exctype, value, traceback)
     else:
         orig_excepthook(exctype, value, traceback)

@@ -46,10 +46,10 @@ def main(args=None):
     longOptions = []   ## SET THAT 
     try:
         opts, args = getopt.getopt(args, shortOptions, longOptions)
-    except getopt.error, msg:
+    except getopt.error as msg:
         # there is an unknown option!
-            print msg      # prints the option error
-            print __doc__  # prints the usage message from the top
+            print(msg)      # prints the option error
+            print(__doc__)  # prints the usage message from the top
             return (-2)
 
     # process options
@@ -61,10 +61,10 @@ def main(args=None):
     # using the -o option on the command line
     for option,optionArg in opts:
         if option=='-h' or option=='-?':
-            print __doc__
+            print(__doc__)
             return(0)     # '0' = no error in UNIX
         else:
-            print "%s option not implemented" % option
+            print("%s option not implemented" % option)
 
     # check arguments
     # correct #, etc
@@ -76,12 +76,12 @@ def main(args=None):
     
     argProblem = False
     if len(args) > maxArgs:
-        print "Wrong number of arguments: %s found (expected max of %s)" % (lan(args),
-                                                                            maxArgs)
+        print("Wrong number of arguments: %s found (expected max of %s)" % (lan(args),
+                                                                            maxArgs))
         argProblem = True
     elif len(args) < minArgs:
-        print "Wrong number of arguments: %s found (expected min of %s)" % (len(args),
-                                                                            minArgs)
+        print("Wrong number of arguments: %s found (expected min of %s)" % (len(args),
+                                                                            minArgs))
         argProblem = True
     # put in other argument checks here
     # print help set argProbem if there is a problem
@@ -89,7 +89,7 @@ def main(args=None):
     ## PUT MORE ARGUMENT CHECKING HERE
 
     if argProblem:
-        print __doc__
+        print(__doc__)
         return(-1)
 
 

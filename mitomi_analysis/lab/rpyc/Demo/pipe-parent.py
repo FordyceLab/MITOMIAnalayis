@@ -11,7 +11,7 @@ try:
     while True:
         conn.serve()
 except EOFError:
-    print "goodbye child"
+    print("goodbye child")
 
-print sys.path[-1]
+print(sys.path[-1])
 

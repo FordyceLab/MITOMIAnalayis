@@ -13,10 +13,10 @@ import os
 
 from types import *
 
-from __init__ import *
+from .__init__ import *
 from utils import flatten
 
-import fasta
+from . import fasta
 
 #
 # Fastq Record Class incorporating quality values.
@@ -84,12 +84,12 @@ def qualToInt( quals ):
     """Given one or more quality characters, returns the corresponding
     list of integer values, as defined by Solexa.
     """
-    return map( lambda x: ord(x)-64, quals )
+    return [ord(x)-64 for x in quals]
 
 def intToQual( ints ):
     """Given a list of integers, returns the corresponding
     quality string as defined by Solexa."""
-    return "".join( map( lambda x: chr(x+64), ints ) )
+    return "".join( [chr(x+64) for x in ints] )
 
 #
 # Identifier
@@ -136,7 +136,7 @@ def FastqIterator(fh,raw=False):
         preLines,nextTitleLine=readTotitle(fh,'+')
         qualTitle = nextTitleLine[1:].rstrip()
         if len(qualTitle.strip()) > 0 and seqTitle != qualTitle:
-            raise FastqParseError, "Error in parsing: @title sequence entry must be immediately followed by corresponding +title quality entry."
+            raise FastqParseError("Error in parsing: @title sequence entry must be immediately followed by corresponding +title quality entry.")
         seqLines = preLines
         qualLines = []
         for i in range(len(seqLines)): # Quality characters should be the same length as the sequence
@@ -149,8 +149,8 @@ def FastqIterator(fh,raw=False):
         else:
             rec=Record()
             rec.title=seqTitle
-            rec.sequence=''.join(map(lambda x: x.rstrip(),seqLines))
-            rec.quality=flatten(map(lambda x: qualToInt(x.rstrip()),qualLines))
+            rec.sequence=''.join([x.rstrip() for x in seqLines])
+            rec.quality=flatten([qualToInt(x.rstrip()) for x in qualLines])
             yield rec
 
 iterator=FastqIterator

@@ -42,21 +42,21 @@ def main(args=None):
     longOptions = []
     try:
         optlist, args = getopt.getopt(args, shortOptions, longOptions)
-    except getopt.error, msg:
+    except getopt.error as msg:
         # there is an unknown option!
-            print msg      # prints the option error
-            print __doc__  # prints the usage message from the top
+            print(msg)      # prints the option error
+            print(__doc__)  # prints the usage message from the top
             return (-2)
 
     # process options
     for option,optionArg in optlist:
         if option=='-h' or option=='-?':
-            print __doc__
+            print(__doc__)
             return(0)     # '0' = no error in UNIX
         elif option == '-I':
             indians = True
         else:
-            print "%s option not implemented" % option
+            print("%s option not implemented" % option)
 
     # check arguments
     # correct #, etc
@@ -66,31 +66,31 @@ def main(args=None):
     maxArgs = 3
     argProblem = False
     if len(args) > maxArgs:
-        print "Wrong number of arguments: %s found (expected max of %s)" % (len(args),
-                                                                            maxArgs)
+        print("Wrong number of arguments: %s found (expected max of %s)" % (len(args),
+                                                                            maxArgs))
         argProblem = True
     elif len(args) < minArgs:
-        print "Wrong number of arguments: %s found (expected min of %s)" % (len(args),
-                                                                            minArgs)
+        print("Wrong number of arguments: %s found (expected min of %s)" % (len(args),
+                                                                            minArgs))
         argProblem = True
 
     if indians and len (args) > 0 :
-        print "Sorry no arguments if you use -I." 
+        print("Sorry no arguments if you use -I.") 
         argProblem = True
     if not indians and len(args) != 3:
-        print "You must specifiy 3 arguments or -I." 
+        print("You must specifiy 3 arguments or -I.") 
         argProblem = True
         
     if argProblem:
-        print __doc__
+        print(__doc__)
         return(-1)
 
 
     # print poem
     if indians:
-        print poem("little","Indians","boys")
+        print(poem("little","Indians","boys"))
     else:
-        print poem(args[0],args[1],args[2])
+        print(poem(args[0],args[1],args[2]))
 
 
     return(0)  # we did it!

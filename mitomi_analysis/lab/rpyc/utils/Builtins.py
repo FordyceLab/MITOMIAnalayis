@@ -125,13 +125,13 @@ class _Helper(object):
     
     def __call__(self, obj = None):
         if orig_isinstance(obj, NetProxy):
-            print "Help on NetProxy object for an instance of %r:" % (obj.__getattr__("__class__").__name__,)
-            print
-            print "Doc:"
-            print obj.__getattr__("__doc__")
-            print
-            print "Members:"
-            print dir(obj)
+            print("Help on NetProxy object for an instance of %r:" % (obj.__getattr__("__class__").__name__,))
+            print()
+            print("Doc:")
+            print(obj.__getattr__("__doc__"))
+            print()
+            print("Members:")
+            print(dir(obj))
         else:
             orig_help(obj)
 help = _Helper()

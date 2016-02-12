@@ -15,7 +15,7 @@ import sys
 from utils import CommandLine
 from sequence import gridBlast as gb
 import os
-import commands
+import subprocess
 
 class QBlastError( Exception ):
     pass

@@ -1,4 +1,4 @@
-from Lib import ImmDict
+from .Lib import ImmDict
 
 
 class FullyDynamicMetaclass(type):
@@ -49,9 +49,8 @@ def _get_conn(proxy):
 def _get_oid(proxy):
     return object.__getattribute__(proxy, "____oid__")
 
-class NetProxy(object):
+class NetProxy(object, metaclass=FullyDynamicMetaclass):
     """NetProxy - convey local operations to the remote object. this is an abstract class"""
-    __metaclass__ = FullyDynamicMetaclass
     __slots__ = ["____conn__", "____oid__", "__weakref__"]
     
     def __init__(self, conn, oid):

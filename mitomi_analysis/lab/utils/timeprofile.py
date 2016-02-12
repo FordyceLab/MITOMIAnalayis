@@ -41,7 +41,7 @@ class TimeProfiler:
         # Note: 'slot' has to be string type
         # we are not checking it here.
 
-        if self.timedict.has_key(slot):
+        if slot in self.timedict:
             del self.timedict[slot]
 
     def lastdiff(self):
@@ -67,14 +67,14 @@ class TimeProfiler:
         """ Return maximum time difference marked """
 
         # Difference of max time with min time
-        times = self.timedict.values()
+        times = list(self.timedict.values())
         return max(times) - min(times)
     
     def timegap(self):
         """ Return the full time-gap since we started marking """
 
         # Return now minus min
-        times = self.timedict.values()
+        times = list(self.timedict.values())
         return time.time() - min(times)
 
     def cleanup(self):
@@ -86,7 +86,7 @@ class TimeProfiler:
     def observe(self, mark1, mark2, key):
         """ Record an observation for averaged time of multiple runs. """
         ( n, total ) = ( 0, 0 )
-        if self.agg.has_key( key ):
+        if key in self.agg:
             ( n, total ) = self.agg[key]
             
         self.agg[key] = ( n+1, total + self.diff( mark1, mark2 ) )
@@ -116,20 +116,20 @@ if __name__ == "__main__":
     # Mark time
     profiler.mark()
     # Execute large loop
-    for x in xrange(10000):
+    for x in range(10000):
         pass
     # Get time
-    print profiler.elapsed()
+    print(profiler.elapsed())
     # Do other things
     profiler.mark('t')
     for x in range(10000):
         for y in range(10000):
             pass
-    print profiler.elapsed('t')
+    print(profiler.elapsed('t'))
 
     # Get total time elapsed
-    print profiler.timegap()
+    print(profiler.timegap())
 
     # Get maximum diff for marks
-    print profiler.maxdiff()
+    print(profiler.maxdiff())
 

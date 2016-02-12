@@ -13,7 +13,7 @@ import math
 
 from utils import flatten
 
-import genbank
+from . import genbank
     
 from PIL import Image
 from PIL import ImageFont
@@ -53,7 +53,7 @@ def test():
 #    track4.loadTrace(trace2)
     sp.render()
 
-    print sp.imageMap
+    print(sp.imageMap)
     sp.save('test.png',clobber=True)
     sp.render(view=(94,906))
     sp.save('testView.png',clobber=True)
@@ -121,7 +121,7 @@ class SequencePlotInterface:
         -1 is returned for both pixel coords.
         
         """
-        if hasattr(xSeq, 'next') or type(xSeq[0]) in (types.ListType, types.TupleType):
+        if hasattr(xSeq, 'next') or type(xSeq[0]) in (list, tuple):
             return tuple([self.xPxl(x) for x in xSeq])
  
         if view == None:
@@ -354,7 +354,7 @@ class SequencePlotGraphicsPIL(SequencePlotInterface):
                 #prevent an infinite loop
         
                 if viewSize < 4:
-                    raise ArgumentError, ("The chosen view size is too small.")
+                    raise ArgumentError(("The chosen view size is too small."))
                     
                 #first figure out the scale
                 
@@ -511,14 +511,14 @@ class SequencePlotGraphicsPIL(SequencePlotInterface):
                             elif trace.vertValue == "min":
                                 newValue = min(pixelDict[xPixel])
                             else:
-                                raise ArgumentError, ("Allowable vertValues are"
+                                raise ArgumentError("Allowable vertValues are"
                                                   "'max', 'min', or 'avg'; not %s"%vertValues)
                             pixelDict[xPixel] = newValue
 
 
                     #convert the vertical values into yPixels
 
-                    for key in pixelDict.keys():
+                    for key in list(pixelDict.keys()):
                         v = pixelDict[key]
                         if v != []:
                             pixelValue = t.yPxl((v,v+1),(yMin,yMax))[0]
@@ -535,7 +535,7 @@ class SequencePlotGraphicsPIL(SequencePlotInterface):
                     #first, if fill is on, fill in the area under and including the trace
 
                     if t.fill != "":
-                        for key in pixelDict.keys():
+                        for key in list(pixelDict.keys()):
                             if pixelDict[key] != []:
                                 if pixelDict[key] == IS_ABOVE:
                                     self.plot.line(((key,bot),(key,top)),fill=t.fill,width=1)
@@ -547,7 +547,7 @@ class SequencePlotGraphicsPIL(SequencePlotInterface):
                                 
                     #now graph the trace, irrespective of having filled
 
-                    xCoords = pixelDict.keys()
+                    xCoords = list(pixelDict.keys())
                     xCoords.sort()
                         
                     for key in xCoords:
@@ -611,7 +611,7 @@ class SequencePlotGraphicsPIL(SequencePlotInterface):
         
     def save(self,filename,clobber=False,format=None):
         if os.access(filename,os.F_OK) and not clobber:
-            raise RuntimeError, 'file "%s" exists' % filename
+            raise RuntimeError('file "%s" exists' % filename)
         self.image.save(file(filename,'wb'),format=format)
      
     def base64png(self):
@@ -691,7 +691,7 @@ class StripChartTrack:
         bottom is below view and the top is above view.
         """
 
-        if hasattr(ySeq, 'next') or type(ySeq[0]) in (types.ListType, types.TupleType):
+        if hasattr(ySeq, 'next') or type(ySeq[0]) in (list, tuple):
             return tuple([self.yPxl(y) for y in ySeq])
 
         yViewSize = yView[1] - yView[0]
@@ -949,18 +949,18 @@ class ImageMap:
         self.areaElements = []
 
         self.moreTags={}
-        for k in mapTags.keys():
+        for k in list(mapTags.keys()):
             if k != "mapTags":
                 self.moreTags[k]=mapTags[k]
             else:
-                for ky,vlu in mapTags[k].items():
+                for ky,vlu in list(mapTags[k].items()):
                     self.moreTags[ky]=vlu
 
 
     def __str__(self):
         return ('<map id="%s" name="%s" %s>\n%s\n</map>' %
                 (self.id,self.id,
-                 ' '.join([('%s="%s"' % (x,y)) for x,y, in  self.moreTags.items()]),
+                 ' '.join([('%s="%s"' % (x,y)) for x,y, in  list(self.moreTags.items())]),
                 "\n".join(self.areaElements)))
 
 
@@ -972,17 +972,17 @@ class ImageMap:
         if id == None:
             id = '_'.join((self.id,shape, str(random.randint(1,900000))))
 
-        for k in kwArgs.keys():
-            if k=='more_tags' and type(kwArgs[k]) == types.DictType:
+        for k in list(kwArgs.keys()):
+            if k=='more_tags' and type(kwArgs[k]) == dict:
                 moreTags=kwArgs[k]
                 del kwArgs[k]
 
-                for k in  moreTags.keys():
+                for k in  list(moreTags.keys()):
                     kwArgs[k] = moreTags[k]
 
         return ('<area id="%s" shape="%s" %s>' %
                 (id,shape,
-                 ' '.join([('%s="%s"' % (x,y)) for x,y, in  kwArgs.items()])))
+                 ' '.join([('%s="%s"' % (x,y)) for x,y, in  list(kwArgs.items())])))
     
 
     def addCircle(self,id,center_xy,radius,**kwArgs):

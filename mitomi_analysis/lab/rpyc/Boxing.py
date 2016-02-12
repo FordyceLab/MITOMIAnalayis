@@ -1,10 +1,10 @@
 import sys
 import traceback
-import cPickle as pickle
+import pickle as pickle
 from weakref import WeakValueDictionary
-from Lib import ImmDict
-from NetProxy import NetProxy, SyncNetProxy, _get_conn, _get_oid
-from Lib import orig_isinstance
+from .Lib import ImmDict
+from .NetProxy import NetProxy, SyncNetProxy, _get_conn, _get_oid
+from .Lib import orig_isinstance
 
 
 class BoxingError(Exception):
@@ -22,10 +22,10 @@ TYPE_IMMDICT = 5
 simple_types = (
     bool, 
     int, 
-    long, 
+    int, 
     float, 
     complex, 
-    basestring, 
+    str, 
     type(None),
 )
 
@@ -35,7 +35,7 @@ def dump_exception(typ, val, tb):
     sys.last_type, sys.last_value, sys.last_traceback = typ, val, tb
     try:
         pickled_exc = pickle.dumps((typ, val, tbtext), protocol = PICKLE_PROTOCOL)
-    except pickle.PicklingError, ex:
+    except pickle.PicklingError as ex:
         newval = NestedException("pickling error %s\nexception type: %r\nexception object: %s" % (ex, typ, val))
         pickled_exc = pickle.dumps((NestedException, newval, tbtext), protocol = PICKLE_PROTOCOL)
     return pickled_exc
@@ -44,7 +44,7 @@ def load_exception(package):
     """returns an exception object"""
     try:
         return pickle.loads(package)
-    except pickle.PicklingError, ex:
+    except pickle.PicklingError as ex:
         return NestedException("failed to unpickle remote exception -- %r" % (ex,))
 
 class Box(object):
@@ -80,13 +80,14 @@ class Box(object):
             if not obj.dict:
                 return TYPE_SIMPLE, {}
             else:
-                return TYPE_IMMDICT, [(self._box(k), self._box(v)) for k, v in obj.items()]
+                return TYPE_IMMDICT, [(self._box(k), self._box(v)) for k, v in list(obj.items())]
         else:
             oid = id(obj)
             self.objects.setdefault(oid, [0, obj])[0] += 1
             return TYPE_PROXY, oid
 
-    def _unbox(self, (type, value)):
+    def _unbox(self, xxx_todo_changeme):
+        (type, value) = xxx_todo_changeme
         if type == TYPE_SIMPLE:
             return value
         elif type == TYPE_TUPLE:

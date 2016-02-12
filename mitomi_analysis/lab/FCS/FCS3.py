@@ -182,9 +182,9 @@ class FCS:
 
     def startTime (self):
         if '$DATE' not in self.text:
-            raise FCSDataError, "$DATE not found in FCS file."
+            raise FCSDataError("$DATE not found in FCS file.")
         if '$BTIM' not in self.text:
-            raise FCSDataError, "$BTIM (data collection start time) not found in FCS file."
+            raise FCSDataError("$BTIM (data collection start time) not found in FCS file.")
        
         
         t = time.strptime("%s %s" % (self.text['$DATE'],self.text['$BTIM']),"%d-%b-%Y %H:%M:%S")
@@ -194,17 +194,17 @@ class FCS:
     def parseFCSfile(self, fileName):
 
         if self.originalData is not None:
-            raise FCSParserError, "FCS object already contains parsed data."
+            raise FCSParserError("FCS object already contains parsed data.")
             
 
         if type(fileName) not in StringTypes:
-            raise TypeError, "filename must be a string."
+            raise TypeError("filename must be a string.")
         f = file(fileName,'rb')
 
         # check file type
         TYPE = f.read(6)
         if TYPE != 'FCS3.0':
-            raise ValueError, '%s is not a valid FCS3.0 file' % fileName
+            raise ValueError('%s is not a valid FCS3.0 file' % fileName)
         #
         ##### HEADER SECTION #####
         #
@@ -218,7 +218,7 @@ class FCS:
         textStart = int(header[1])
         textEnd = int(header[2])
         if textStart == 0 or textEnd == 0:
-            raise FCSParseError, "TEXTAREA boundaries undefined"
+            raise FCSParseError("TEXTAREA boundaries undefined")
         #
         ##### TEXTAREA SECTION #####
         #
@@ -266,9 +266,9 @@ class FCS:
             numTypeCode='d'
             expectedBits = 64
         elif self.dataType == 'A':
-            raise Exception, "ASCII data encoding not supported"
+            raise Exception("ASCII data encoding not supported")
         else:
-            raise Exception, "Data encoding not understood"
+            raise Exception("Data encoding not understood")
 
         # check the # of parameter bits and
         # initialize parameter,range and gain lists
@@ -283,7 +283,7 @@ class FCS:
             
             bitCount=int(self.text['$P%sB'%n].rstrip().lstrip())
             if bitCount != expectedBits:
-                raise Exception, "Parameter '%s' has the wrong number of bits." % paramStr
+                raise Exception("Parameter '%s' has the wrong number of bits." % paramStr)
 
             paramMax = int(self.text['$P%sR'%n].rstrip().lstrip())
             self.ranges.append(paramMax)
@@ -300,7 +300,7 @@ class FCS:
         
         # get the DATA
         if self.text['$MODE'].rstrip().lstrip() != 'L':
-            raise Exception, "Only LIST format data supported"
+            raise Exception("Only LIST format data supported")
         
         self.dataStart = int(self.text['$BEGINDATA'].rstrip().lstrip())
         self.dataEnd = int(self.text['$ENDDATA'].rstrip().lstrip())
@@ -470,7 +470,7 @@ class FCS:
             for parameter in parameters:
                 rv.append(self.mean(parameter,unfiltered=unfiltered))
         else:
-            raise ValueError, "metric unknown"
+            raise ValueError("metric unknown")
         
         return rv
 
@@ -633,7 +633,7 @@ class FCS:
         """
 
         if metric != MEDIAN and metric != MEAN:
-            raise ValueError, "metric unknown"
+            raise ValueError("metric unknown")
 
         fEventCount = shape(self.filteredData)[0]
         if windowSize == None:
@@ -659,7 +659,7 @@ class FCS:
                 else:
                     windowM = mean(values[start:end])
                 if windowM >= overallM * thresholdFactor:
-                    put(mask,range(start,end),[1]*windowSize)
+                    put(mask,list(range(start,end)),[1]*windowSize)
                     
         return self.maskEvents(mask)
                
@@ -694,7 +694,7 @@ class FCS:
         elif count != None:
             limit = dSorted[-count]
         else:
-            raise ValueError, "fraction, count, or sigma must be specified."
+            raise ValueError("fraction, count, or sigma must be specified.")
         
         mask =  (d >= limit)
 

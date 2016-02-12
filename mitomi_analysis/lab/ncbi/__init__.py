@@ -10,9 +10,9 @@
 
 import os
 import sys
-import StringIO
+import io
 import types
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import datetime, time
 
 import sys, os, re
@@ -60,7 +60,7 @@ def ncbiID():
     Scripts can set ncbi._author_email_ and ncbi._tool_str. to
     override the default values.
     """
-    return "&email=%s&tool=%s" % tuple([urllib.quote_plus(x)
+    return "&email=%s&tool=%s" % tuple([urllib.parse.quote_plus(x)
                                         for x in (_author_email_,_tool_str_)])
 
 #
@@ -80,13 +80,13 @@ except:
                            user='readonly',
                            passwd='')
     except:
-        print 'NCBI mysqldb not found'
+        print('NCBI mysqldb not found')
 
 try:
     taxDB = kdbom.db(db='taxonomy_2008_03_06',
                      reuseDBconnection=ncbiDB)
 except:
-    print 'taxonomy mysqldb not found'
+    print('taxonomy mysqldb not found')
 
 
 ##########################################################
@@ -113,7 +113,7 @@ def throttleRequest( url,debug=False,**args ):
     grabLock = ncbiDB.execute("SELECT GET_LOCK(%s,%s)",
                               (LOCK_STRING, LOCK_WAIT_TIMEOUT) )
     if grabLock != 1:
-        raise NCBIRequestError, ("Error acquiring NCBI request lock: " +
+        raise NCBIRequestError("Error acquiring NCBI request lock: " +
                                  str(grabLock))
     #TODO:  What about this??
     #_mysql_exceptions.OperationalError:
@@ -124,7 +124,7 @@ def throttleRequest( url,debug=False,**args ):
     minimumWaitTime = datetime.timedelta( seconds=REQUEST_DELAY )
 
     if lastLookup > datetime.datetime.today():
-        raise NCBIRequestError, ("Time incongruity in NCBI_Lock table: "
+        raise NCBIRequestError("Time incongruity in NCBI_Lock table: "
                                  "%s > %s" %
                                  (lastLookup, datetime.datetime.today()))
     while( datetime.datetime.today() - lastLookup  < minimumWaitTime ):
@@ -132,13 +132,13 @@ def throttleRequest( url,debug=False,**args ):
 
     # Now we're ready to make the request...
     url = (url +
-           '&'.join([(k)+'='+(str(v)) for k,v in args.items()]) +
+           '&'.join([(k)+'='+(str(v)) for k,v in list(args.items())]) +
            ncbiID())
 
     if debug:
-        print "url: %s" %url
+        print("url: %s" %url)
     
-    output = urllib.urlopen( url )
+    output = urllib.request.urlopen( url )
     
     ncbiDB.execute("UPDATE NCBI_Lock SET Last_Lookup=NOW();")
     ncbiDB.execute("SELECT RELEASE_LOCK(%s)", (LOCK_STRING) )
@@ -201,7 +201,7 @@ def esummary( eDB,*idList,**kwargs):
             addToOutput(result)
             i+=BATCH_SIZE
     else:
-        raise ValueError, "nothing to fetch, esearch result or iterable of IDs required"
+        raise ValueError("nothing to fetch, esearch result or iterable of IDs required")
        
     
 
@@ -265,7 +265,7 @@ def efetch(eDB,rettype,oFile,*args,**kwargs):
             oFile.write(result.read())
             i+=BATCH_SIZE
         else:
-            raise ValueError, "nothing to fetch, esearch result or iterable of IDs required"
+            raise ValueError("nothing to fetch, esearch result or iterable of IDs required")
 
 
 ##############################################################
@@ -326,7 +326,7 @@ class Taxon :
             # raw result of an efetch,
             # i.e. a TaxaSet.  Parse and grab the 
             # first Taxon
-            if type(xml) in types.StringTypes:
+            if type(xml) in (str,):
                 doc = minidom.parseString(xml)
                 
                 #print doc.toxml()
@@ -345,9 +345,9 @@ class Taxon :
             # now we have an xml.minidom thing
             # call all the microparsers
             if not isinstance(xml,minidom.Element):
-                raise ValueError, "can't parse input XML, or not a minidom.Element"
+                raise ValueError("can't parse input XML, or not a minidom.Element")
             elif xml.parentNode.nodeName != 'TaxaSet':
-                raise ValueError, "dom element not a child of a TaxaSet"
+                raise ValueError("dom element not a child of a TaxaSet")
             else:
                 self.taxID,self.scientificName,self.rank,self.division=idNameRankDivFromTaxonElem(xml)
                 self.createDate,self.updateDate,self.pubDate=datesFromTaxonElement(xml)
@@ -515,7 +515,7 @@ def getTaxa( idList ):
 
     rv=[]
     
-    sioBuffer = StringIO.StringIO()
+    sioBuffer = io.StringIO()
     efetch('taxonomy','xml',sioBuffer,idList)
 
     sioBuffer.seek(0)
@@ -574,9 +574,9 @@ def accession2gi(accList):
     esRslt = esummary('nuccore',WebEnv=searchRslt['WebEnv'],
                       query_key=searchRslt['query_key'],
                       count=searchRslt['count'])
-    print esRslt
+    print(esRslt)
 
-    for gi,summary in esRslt.items():
+    for gi,summary in list(esRslt.items()):
         rv[summary['Caption']]=gi
 
     return rv

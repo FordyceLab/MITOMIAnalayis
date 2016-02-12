@@ -11,6 +11,7 @@ __version__  ="$Revision: 1.3 $".split()[1]
 import sys, os, re
 from kdbom.kdbom import unique,union,intersection,shortest
 from tabbedfile import tabbifyMatrix
+from functools import reduce
 
 __all__=["CommandLine","timeprofile",'readArgsOrFiles','flatten','unique',
          'union','intersection','shortest','tabbifyMatrix']
@@ -97,9 +98,9 @@ def batchList(iterable,batchSize=None,batchCount=None):
     iterable. Either batchSize or batchCount should be an integer.
     """
     if batchCount == None and batchSize == None:
-        raise ValueError , "only batchSize or batchCount may be specified"
+        raise ValueError("only batchSize or batchCount may be specified")
     elif batchCount != None and batchSize != None:
-        raise ValueError , "only batchSize or batchCount may be specified"
+        raise ValueError("only batchSize or batchCount may be specified")
 
     rv=[]
     try:

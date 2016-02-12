@@ -1,5 +1,5 @@
-from NetProxy import NetProxyWrapper, _get_conn, _get_oid
-from Lib import raise_exception
+from .NetProxy import NetProxyWrapper, _get_conn, _get_oid
+from .Lib import raise_exception
 
 
 class AsyncNetProxy(NetProxyWrapper):

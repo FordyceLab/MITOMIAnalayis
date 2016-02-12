@@ -24,10 +24,10 @@ r2 = f1(11)
 # now we'll wait for both results to finish. this should print around 20 lines
 # (more or less, depending on the phase)
 while not r1.is_ready or not r2.is_ready:
-    print "!"
+    print("!")
     time.sleep(1)
 
-print "---"
+print("---")
 
 # now we'll dig in the h4xx0r shit -- running things simultaneously
 # for this, we'll need another connection, and another proxy:
@@ -41,17 +41,17 @@ r2 = f2(11)
 
 # so this time, it will print around 11 lines
 while not r1.is_ready or not r2.is_ready:
-    print "!"
+    print("!")
     time.sleep(1)
 
-print "---"
+print("---")
 
 # very haxxor indeed. now, we'll see how to use the on_ready callback
 r1 = f1(9)
 r2 = f2(11)
 
 def blah(res):
-    print "look mama, no hands! res = %r" % (res.result,)
+    print("look mama, no hands! res = %r" % (res.result,))
 
 # set the on_ready callback -- when r1 is becomes ready, the callback will
 # be called automagically
@@ -59,7 +59,7 @@ r1.on_ready = blah
 
 # this should print 9 "!", then "look mama", then two more "!"
 while not r1.is_ready or not r2.is_ready:
-    print "!"
+    print("!")
     time.sleep(1)
 
 

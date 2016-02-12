@@ -2,8 +2,8 @@
 functions for distributing package and modules across hosts
 """
 import inspect
-from Files import upload_dir
-from Builtins import reload
+from .Files import upload_dir
+from .Builtins import reload
 
 
 __all__ = ["upload_package", "update_module"]

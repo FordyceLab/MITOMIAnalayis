@@ -87,7 +87,7 @@ isAllNA = isAllDRNA
 def reverseComplement(seq):
     """return the reverse complement of a sequence"""
     if not isAllDRNA(seq):
-        raise SequenceError, "Non-DRNA character in seq: %s" % (seq)
+        raise SequenceError("Non-DRNA character in seq: %s" % (seq))
 
     # complement
     compl = complement(seq)
@@ -112,7 +112,7 @@ def complement(seq,transl=None):
         transl=RNAcomplement
 
     if transl == None:
-        raise ValueError , "sequence is not all DNA or RNA bases." 
+        raise ValueError("sequence is not all DNA or RNA bases.") 
     
     compl = seq.translate(transl)
     return compl
@@ -217,7 +217,7 @@ def randomBaseGenerator(pDict={'A':1, 'T':1, 'G':1, 'C':1}):
     freqs=[]
     sumf=0
     
-    for c,f in pDict.items():
+    for c,f in list(pDict.items()):
         choices.append(c)
         if len(freqs) == 0:
             freqs.append(f)
@@ -348,8 +348,8 @@ def bashSequence(seqString,mutablePositions,
     for c in seqString:
         if allowNonBase == False:
             if c not in bases:
-                raise SequenceError, "%s at position %s is not a DNA base, try one of %s" % \
-                      (c,seqString.find(c),bases)
+                raise SequenceError("%s at position %s is not a DNA base, try one of %s" % \
+                      (c,seqString.find(c),bases))
         seq.append(c)
         
 
@@ -361,11 +361,11 @@ def bashSequence(seqString,mutablePositions,
             elif seq[pos] in pyrimidines:
                 seq[pos] = randomBase(excludeList=purines+excludeList)
             elif seq[pos] not in bases :
-                raise SequenceError, "%s at position %s is not a DNA base, try one of %s" % \
-                      (seq[pos],pos,bases)
+                raise SequenceError("%s at position %s is not a DNA base, try one of %s" % \
+                      (seq[pos],pos,bases))
             else:
-                print seq[pos]
-                raise Exception, "this should never happen, evacuate the building!\n************NOW**********\n"
+                print(seq[pos])
+                raise Exception("this should never happen, evacuate the building!\n************NOW**********\n")
         elif allowSameBase == True:
             seq[pos] = randomBase(excludeList=excludeList)
 
@@ -475,7 +475,7 @@ def Tm(s,dnac=50,saltc=50,rna=False,debug=False):
             dhL=dh+deltah
             dsL=ds+deltas
             if debug:
-                print "delta h=",dhL
+                print("delta h=",dhL)
             return dsL,dhL
 
     def overcount(st,p):
@@ -528,9 +528,9 @@ def Tm(s,dnac=50,saltc=50,rna=False,debug=False):
     ds=ds-0.368*(len(s)-1)*math.log(saltc/1e3)
     tm=((1000* (-dh))/(-ds+(R * (math.log(k)))))-273.15
     if debug:
-        print "ds="+str(ds)
-        print "dh="+str(dh)
-        print "Tm="+str(tm)
+        print("ds="+str(ds))
+        print("dh="+str(dh))
+        print("Tm="+str(tm))
         
     return tm
 
@@ -651,7 +651,7 @@ class StringSequence:
         return sum(self.matchLengths(DRNAbasesPat))
 
     def blastSequence(self):
-        import blast
+        from . import blast
         import kdbom.exceptions
         try:
             return blast.Sequence(Name=self.m8name())
@@ -661,13 +661,13 @@ class StringSequence:
     def LZWsize(self):
         """return the size of the LZW compressed sequence
         """
-        import aos
+        from . import aos
         return aos.LZWsize(self.sequence)
 
     def LZWratio(self):
         """Return the LZW compression ratio.
         """
-        import aos
+        from . import aos
         return float(self.LZWsize())/float(self.sequence)
     
     def __getitem__(self,y):
@@ -691,7 +691,7 @@ def sequenceMatchLengths(rec,patterns):
     rv = []
     for pattern in patterns:
         #print patterns
-        mLengths = map(len,pattern.findall(sequence))
+        mLengths = list(map(len,pattern.findall(sequence)))
         if len(mLengths) == 0:
             rv.append(0)
         else:
@@ -745,12 +745,12 @@ def DRNABaseCount(s):
 def LZWsize(s):
     """return the size of the LZW compressed sequence
     """
-    import aos
+    from . import aos
     return aos.LZWsize(self.sequence)
 
 def LZWratio(s):
     """Return the LZW compression ratio.
     """
-    import aos
+    from . import aos
     return float(self.LZWsize())/float(self.sequence)
 

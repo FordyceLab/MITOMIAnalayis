@@ -1,4 +1,4 @@
-from NetProxy import NetProxyWrapper, _get_conn, _get_oid
+from .NetProxy import NetProxyWrapper, _get_conn, _get_oid
 
 
 class ModuleNetProxy(NetProxyWrapper):

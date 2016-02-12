@@ -17,7 +17,7 @@ import sys
 from utils import CommandLine
 from lab.grid import GridThreads as gt
 import os
-import commands
+import subprocess
 
 class QElandError( Exception ):
     pass
@@ -30,7 +30,7 @@ oligoFNs = cl.infiniteArg("inputFile1 [inputFile2...]")
 cl.execute()
 
 genomeFN = os.path.abspath( genomeFN )
-oligoFNs = map( os.path.abspath, oligoFNs )
+oligoFNs = list(map( os.path.abspath, oligoFNs ))
 
 maxNodes = int(maxNodes)
 chunkSize = int(chunkSize)
@@ -67,7 +67,7 @@ def knit( oligoFN, tornFiles ):
         if not os.access( fn+".out", os.F_OK ):
             raise QElandError("Output file %s was not generated." % fn)
 
-    (o, s) = commands.getstatusoutput("cat " + " ".join( map( lambda x: x+".out", tornFiles ) ) + "> " + oligoFN + ".eland" )
+    (o, s) = subprocess.getstatusoutput("cat " + " ".join( [x+".out" for x in tornFiles] ) + "> " + oligoFN + ".eland" )
 
     for fn in tornFiles:
         os.remove( fn )

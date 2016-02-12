@@ -8,14 +8,14 @@
 
 import sys
 import time
-from __init__ import *
+from .__init__ import *
 
-import Rpyc
+from . import Rpyc
 rpycRoot = os.path.split(Rpyc.__file__)[0]
 serverPath = os.path.join(rpycRoot,'Servers','grid_forking_server.py')
 
-import Rpyc
-from Rpyc import *
+from . import Rpyc
+from .Rpyc import *
 
 
 class GridServers(GridSubmission):
@@ -35,10 +35,10 @@ class GridServers(GridSubmission):
             self.waitForServers()            
             self.servers = []
             hosts = self.jobHosts()
-            print hosts
+            print(hosts)
 
             for i in range(len(hosts)):
-                print hosts[i],self.taskPort(i)
+                print(hosts[i],self.taskPort(i))
                 self.servers.append(SocketConnection(hosts[i],
                                     self.taskPort(i+1)))
                 if savePath:
@@ -62,7 +62,7 @@ class GridServers(GridSubmission):
         """
         while self.timeSinceSubmit().seconds < timeout:
             time.sleep(polling)
-            print Qstat().stateCount('r',self.jobID)
+            print(Qstat().stateCount('r',self.jobID))
             try:
                 if Qstat().stateCount('r',self.jobID) == self.serverCt:
                     time.sleep(3)  # wait for the server to start
@@ -70,7 +70,7 @@ class GridServers(GridSubmission):
             except:
                 pass
         self.kill()
-        raise RuntimeError , "Timeout waiting for Rpyc servers"
+        raise RuntimeError("Timeout waiting for Rpyc servers")
 
 
     def connect(self):

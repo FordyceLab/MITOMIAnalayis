@@ -4,7 +4,7 @@ exposes a nice and easy interface to the internals of rpyc.
 this module, along with Utils, are the only modules most clients will need.
 """
 from weakref import WeakValueDictionary
-from Serving import DEFAULT_PORT
+from .Serving import DEFAULT_PORT
 from Rpyc.Stream import SocketStream, PipeStream
 from Rpyc.Channel import Channel
 from Rpyc.Connection import Connection

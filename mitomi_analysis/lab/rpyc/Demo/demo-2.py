@@ -15,7 +15,7 @@ c = SocketConnection("localhost")
 # redirect our stdout to the server
 #
 sys.stdout = c.modules.sys.stdout
-print "this time we focus on `the seatle music`"
+print("this time we focus on `the seatle music`")
 
 #
 # and the other way round
@@ -38,7 +38,7 @@ c.modules.sys.stdout = c.modules.sys.__stdout__
 # now let's play with callbacks
 #
 def f(text):
-    print text
+    print(text)
 
 c.modules["Rpyc.Demo.testmodule"].caller(f, "nirvana")
 
@@ -56,14 +56,14 @@ c.modules["Rpyc.Demo.testmodule"].caller(g, f, "soundgarden")
 #  * upload, download -- transfering files/directories to/from the client/server (all the permutations)
 #  * remote_shell, remote_interpreter -- running remote processess and debugging
 #
-print hasattr(sys, "path")
-print hasattr(c.modules.sys, "path")
+print(hasattr(sys, "path"))
+print(hasattr(c.modules.sys, "path"))
 
-print getattr(sys, "maxint")
-print getattr(c.modules.sys, "maxint")
+print(getattr(sys, "maxint"))
+print(getattr(c.modules.sys, "maxint"))
 
-print reload(sys)
-print reload(c.modules.sys)
+print(reload(sys))
+print(reload(c.modules.sys))
 
 f=open("lala.txt", "w")
 f.write("king crimson")
@@ -75,7 +75,7 @@ c.modules.os.remove("../lala.txt")
 remote_interpreter(c)
 
 
-print "goodbye"
+print("goodbye")
 
 
 

@@ -86,7 +86,7 @@ def __runJob(cmd,cArgs):
     else:
         sysCmd = "%s %s" % (cmd, cArgs) 
     
-    print >> sys.stderr, "# gridIt Command: %s" % sysCmd
+    print("# gridIt Command: %s" % sysCmd, file=sys.stderr)
     sys.stderr.flush()
     return os.system(sysCmd)
 
@@ -100,8 +100,8 @@ if __name__ == "__main__":
     try:
         opts,args = getopt(sys.argv[1:],'mbst:h?')
     except GetoptError:
-        print >> sys.stderr, "*unknown option found*"
-        print >> sys.stderr, __doc__
+        print("*unknown option found*", file=sys.stderr)
+        print(__doc__, file=sys.stderr)
         sys.exit(1)
         
     try:
@@ -111,7 +111,7 @@ if __name__ == "__main__":
         cmd=[]
 
     if len(args) ==0 or len(jobArgs) == 0:
-            print __doc__
+            print(__doc__)
             sys.exit(1)
 
     # defaults
@@ -129,7 +129,7 @@ if __name__ == "__main__":
         elif o=='-m':
             mail = 'ea'
         elif o in ('-h','-?'):
-            print __doc__
+            print(__doc__)
             sys.exit(2)
 
 

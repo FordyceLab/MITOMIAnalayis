@@ -16,9 +16,9 @@ import types
 import pickle
 import os.path
 import tabbedfile
-import compact
-import fasta
-import commands
+from . import compact
+from . import fasta
+import subprocess
 
 class SolexaRead(fasta.Record):
     """Container for a Solexa read.
@@ -32,7 +32,7 @@ def parseBustard(fileNames, dropDots=True):
     """A generator for reads in Bustard *_seq.txt files that
     returns SolexaRead objects
     """
-    if type(fileNames) not in (types.ListType,types.TupleType):
+    if type(fileNames) not in (list,tuple):
         fileNames = (fileNames,)
 
     for fn in fileNames:
@@ -60,7 +60,7 @@ def parseGerald( fileNames, fastAndLoose=False ):
     fastAndLoose = True will result in a very fast
     parser with no error checking. Use with caution."""
 
-    if type(fileNames) not in (types.ListType,types.TupleType):
+    if type(fileNames) not in (list,tuple):
         fileNames = (fileNames,)
 
     sequenceLine = False
@@ -154,13 +154,13 @@ class ElandRecord:
     def fasta(self):
         """returns fasta.Record corresponding to this record
         """
-        import fasta
+        from . import fasta
         return fasta.Record(title=self.title,
                             sequence=self.sequence)
     def LZWsize(self):
         """return the size of the LZW compressed sequence
         """
-        import aos
+        from . import aos
         return aos.LZWsize(self.sequence)
 
     def LZWratio(self):
@@ -305,7 +305,7 @@ def parseEland( fileNames ):
     """Given one or more eland output files, parses
     them and returns a list of ElandRecords."""
     
-    if type(fileNames) not in (types.ListType,types.TupleType):
+    if type(fileNames) not in (list,tuple):
         fileNames = (fileNames,)
 
     for fn in fileNames:
@@ -320,7 +320,7 @@ def eland2fastaString (line):
     """Take an eland string and return a fasta string
     Can be a generator or sequence of eland lines
     """
-    if type(line) in (types.ListType,types.TupleType,types.FileType):
+    if type(line) in (list,tuple,types.FileType):
         return [eland2fastaString(l) for l in line]
     
     title,seq,undef = line.split(None,2)
@@ -339,12 +339,12 @@ class MultiSequenceSquashFile(fasta.Record):
         file object or path.  
         """
         if not clobber and os.path.exists(fastaOutput):
-            raise ValueError , "%s exists - beep!!" % fastaOutput
+            raise ValueError("%s exists - beep!!" % fastaOutput)
 
         if title == '':
             title = 'MSSquash'
 
-        if type(fastaInput) in types.StringTypes:
+        if type(fastaInput) in (str,):
             title += ('_'+os.path.split(fastaInput)[1])
 
         
@@ -356,9 +356,9 @@ class MultiSequenceSquashFile(fasta.Record):
         self.linker=linkerChar*linkerLength
         
 
-        print >> file(fastaOutput,'w'), ">%s" % title 
+        print(">%s" % title, file=file(fastaOutput,'w')) 
 
-        print len(list(fasta.FastaIterator(fastaInput)))
+        print(len(list(fasta.FastaIterator(fastaInput))))
 
         if fastaInput != None:
             self.appendFastaRecords(fasta.FastaIterator(fastaInput))
@@ -378,14 +378,14 @@ class MultiSequenceSquashFile(fasta.Record):
                 if len(self.recOffsets) == 0:
                     self.recOffsets.append(0)
                 else:
-                    print >>outFile, self.linker
+                    print(self.linker, file=outFile)
                     ##TODO: Test RecOffsets
                     self.recOffsets.append(self.recOffsets[-1] 
                                            + self._lastRecordLen  
                                            + len(self.linker)) 
                 self._lastRecordLen=len(rec)
-                print >>outFile, rec.wrappedSequence()
-                print self.recOffsets[-1]
+                print(rec.wrappedSequence(), file=outFile)
+                print(self.recOffsets[-1])
                 
         finally:
             outFile.close()
@@ -403,13 +403,13 @@ class MultiSequenceSquashFile(fasta.Record):
         return corrected ElandRecord.
         """
         if not isinstance(elandRec,ElandRecord):
-            raise ValueError, "input to fixEland is not an ElandRecord instance."
+            raise ValueError("input to fixEland is not an ElandRecord instance.")
         if elandRec.genomeFile != self.title and False:
             #TODO: that's  broken dude
             return elandRec
         else:
             eOffset = int(elandRec.genomePosn)
-            print eOffset
+            print(eOffset)
             for i in range(len(self.recOffsets)):
                 if self.recOffsets[i] > eOffset:
                     correctOffset = eOffset-self.recOffsets[i-1]
@@ -471,5 +471,5 @@ def extractNM( elandResults, outputPath=None, forceLowMemory=False ):
     if outputPath:
         cmd += " > %s" % (outputPath)
 
-    return commands.getstatusoutput( cmd )
+    return subprocess.getstatusoutput( cmd )
 

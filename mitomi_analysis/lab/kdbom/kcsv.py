@@ -5,13 +5,13 @@
 #     $Id: kcsv.py,v 1.4 2008/01/24 18:29:40 kael Exp $    
 #
 
-from __future__ import division
+
 import csv,re,string
 import os.path
 import types
 
 from copy import copy
-from kdbom import SqlAmericanDate
+from .kdbom import SqlAmericanDate
 
 
 notNumeric = re.compile(r'[^\d\.]')
@@ -70,21 +70,21 @@ class table:
             else:
                 fieldCounts[len(fields)] = 1
 
-        counts = fieldCounts.values()
+        counts = list(fieldCounts.values())
         counts.sort()
         bigCount = counts[-1]
 
         numberOfFields = None
-        for k in fieldCounts.keys():
+        for k in list(fieldCounts.keys()):
             if fieldCounts[k] == bigCount:
                 numberOfFields = k
         
 
-        print "probably " + str(numberOfFields) + " fields"
+        print("probably " + str(numberOfFields) + " fields")
         #print i
         csvFile.close()
 
-        print columnTypes
+        print(columnTypes)
 
         if columnTypes == None:
             columnTypes = [None] * numberOfFields
@@ -97,7 +97,7 @@ class table:
             columnNames = (list(columnNames) +
                            ([None]* (numberOfFields - len(columnNames))))
 
-        print columnTypes
+        print(columnTypes)
 
         data = []
         for i in range(numberOfFields):
@@ -112,8 +112,8 @@ class table:
         # only take values from lines with
         # the correct number of fields
         #
-        print numberOfFields
-        print lines[0]
+        print(numberOfFields)
+        print(lines[0])
         for l in lines:
             if len(l) >= numberOfFields:
                 #print l
@@ -123,16 +123,16 @@ class table:
                     #print data
             
                     
-        print len(data)
-        print len(data[0])
+        print(len(data))
+        print(len(data[0]))
 
                         
         
         for i in range(len(data)):
-            print "processing col %d" % i
+            print("processing col %d" % i)
 
-            print "First Row: %s" % data[1][0]
-            print columnTypes[i]
+            print("First Row: %s" % data[1][0])
+            print(columnTypes[i])
             
             self.columns.append(column(data[i],name=columnNames[i]
                                        ,_type=columnTypes[i]))
@@ -141,25 +141,25 @@ class table:
         if indicies != None:
             self.indicies=[]
             for idx in indicies:
-                if (type(idx) == types.StringType or
-                    (type(idx) in (types.TupleType, types.ListType) and
-                     types(idx[0] == types.StringType))):
+                if (type(idx) == bytes or
+                    (type(idx) in (tuple, list) and
+                     types(idx[0] == bytes))):
 
                     self.indicies.append((idx,))
 
-                elif type(idx) == types.IntType:
+                elif type(idx) == int:
 
                      self.indicies.append((self.columns[idx].name,))
 
-                elif (type(idx) in (types.TupleType, types.ListType) and
-                      types(idx[0] == types.IntType)):
+                elif (type(idx) in (tuple, list) and
+                      types(idx[0] == int)):
                     thisIndex = []
                     for col in idx:
                         thisIndex.append(self.columns[col])
                         self.indicies.append(thisIndex[:])
         else:
             self.indicies = []
-        print self.indicies
+        print(self.indicies)
 
         # that's it
 
@@ -237,10 +237,10 @@ class table:
         if addTimestamp:
             colDefs.append("`timestamp` TIMESTAMP")
 
-        print 'CREATE %s TABLE `%s` (%s) ENGINE=%s' % (temporary,
+        print('CREATE %s TABLE `%s` (%s) ENGINE=%s' % (temporary,
                                                       self.name,
                                                       ", ".join(colDefs + keys),
-                                                      self.engine)
+                                                      self.engine))
         
         rv = 'CREATE %s TABLE `%s` (%s) ENGINE=%s' % (temporary,
                                                       self.name,
@@ -279,12 +279,12 @@ class table:
                 #print values
             rows.append(values)
             if i % 30000 == 0 and i != 0:
-                print "%s records inserted" % (i+1)
+                print("%s records inserted" % (i+1))
                 cur.executemany(insertQuery,rows)
                 rows = []
         
         cur.executemany(insertQuery,rows)
-        print "insert complete"
+        print("insert complete")
         db.refresh()
 
 
@@ -309,7 +309,7 @@ class column:
         else:
             self.name = data.pop(0).replace(' ','_')
             
-        print self.name
+        print(self.name)
         self.data = copy(data)
 
 
@@ -332,7 +332,7 @@ class column:
         alpha_count = 0
 
         if self.type == None:
-            print 'no type specified, inferring from data'
+            print('no type specified, inferring from data')
             for d in self.data:
 
                 if not d in self.enumCandidates and d != self.name:
@@ -353,9 +353,9 @@ class column:
                     self.alpha = True
                     if self.name == "Length":
                         alpha_count += 1
-                        print alpha_count
-                        print d
-                        print notNumeric.search(d)
+                        print(alpha_count)
+                        print(d)
+                        print(notNumeric.search(d))
 
                     if self.maxLength == None \
                            or len(d) > self.maxLength:
@@ -411,7 +411,7 @@ class column:
                 else:
                     self.probFactor = False
 
-        print self.type
+        print(self.type)
         # are there any data?
         if self.enumCandidates != [ '' ]:
             self.hasData = True
@@ -427,7 +427,7 @@ class column:
         if self.probEnum or self.type == 'ENUM':
             self.type = "ENUM('%s')" % string.join(self.enumCandidates,"','")
 
-        print self.type
+        print(self.type)
         if self.type == None:
             if self.alpha:
                 if self.maxLength < 255:
@@ -444,8 +444,8 @@ class column:
                 else:
                     self.type = "DOUBLE"
 
-        print self.type
-        print '---'
+        print(self.type)
+        print('---')
 
         
 class NCBIdmp:
@@ -483,7 +483,7 @@ class NCBIdmp:
 
         self.db = db
         
-        from cStringIO import StringIO
+        from io import StringIO
         self.fileName = os.path.split(dmpPath)[1]
         
         dmpFile = file(dmpPath)

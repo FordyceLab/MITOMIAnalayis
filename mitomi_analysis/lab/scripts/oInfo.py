@@ -94,14 +94,14 @@ else:
     try:
         optlist, args = getopt(sys.argv[1:],'taUinrkdhsHwC')
     except:
-        print
-        print usage()
+        print()
+        print(usage())
         sys.exit(2)
 
     for (opt,opt_arg) in optlist:
         if opt == '-h':
-                print
-                print usage()
+                print()
+                print(usage())
                 sys.exit(1)
         elif opt == '-t':
             FASTA =  False
@@ -129,8 +129,8 @@ else:
         elif opt == '-C':
             USE_CGI = True
         else:
-            print
-            print usage()
+            print()
+            print(usage())
             sys.exit(2)
 
 
@@ -251,16 +251,16 @@ for uid in  utils.readArgsOrFiles(cmdArgs,CGI_OVERRIDE=USE_CGI,
         labels.append('Sequence')
 
     if FASTA:
-        print oRec
+        print(oRec)
     elif TAB_DELIM:
         if D_HEADER:
-            print string.join(labels,'\t')
+            print(string.join(labels,'\t'))
             D_HEADER = False
-        print string.join(fields,'\t')        
+        print(string.join(fields,'\t'))        
 
     elif HTML_OUTPUT:
         if not HEADER_ROW_DONE:
-            print """Content-type: text/html\n
+            print("""Content-type: text/html\n
 
 <!DOCTYPE html
 PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -272,16 +272,16 @@ PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 <body>
 <table>
 <tr>
-"""
+""")
         for l in labels:
-            print """<td>%s</td>""" % (l)
-            print """</tr>"""
+            print("""<td>%s</td>""" % (l))
+            print("""</tr>""")
             HEADER_ROW_DONE = True
         
-        print """<tr>"""
+        print("""<tr>""")
         for f in fields:
-            print """<td>%s</td>""" % (f)
-        print """</tr>"""
+            print("""<td>%s</td>""" % (f))
+        print("""</tr>""")
 
           
 if failureCt == 0:

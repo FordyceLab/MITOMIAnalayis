@@ -15,7 +15,7 @@ import sys
 from lab.utils import CommandLine
 from lab.sequence import gridBlast as gb
 import os
-import commands
+import subprocess
 
 class QBlastError( Exception ):
     pass
@@ -42,7 +42,7 @@ cl.execute()
 n = int(n)
 
 if not os.path.lexists( inFile ):
-    print "Error: file %s not found." % ( inFile )
+    print("Error: file %s not found." % ( inFile ))
     sys.exit(0)
 
 restarts = 0

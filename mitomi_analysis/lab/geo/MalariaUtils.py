@@ -44,7 +44,7 @@ def NomadIdToOligoid(oligoid):
        the OLIGO version."""
     
     # first, see if this is a case without a good pattern:
-    if nonPatternDict.has_key(oligoid):
+    if oligoid in nonPatternDict:
         return nonPatternDict[oligoid]
 
     

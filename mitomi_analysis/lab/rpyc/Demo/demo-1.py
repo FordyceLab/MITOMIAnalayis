@@ -49,10 +49,10 @@ c = SocketConnection("localhost")
 # name, and then the attribute you want to get.
 #
 
-print c.modules.sys
-print c.modules.sys.path 
+print(c.modules.sys)
+print(c.modules.sys.path) 
 c.modules.sys.path.append("lucy")
-print c.modules.sys.path[-1]
+print(c.modules.sys.path[-1])
 
 #
 # these remote objects are first class objects, like all others in python. this means
@@ -65,15 +65,15 @@ rpath.pop(-1)
 #
 # and as you might expect, netproxies also look like the real objects
 #
-print dir(rpath)
+print(dir(rpath))
 
 #
 # but there are a couple of issues with netproxies. the type(), isinstance(), and 
 # issubclass() classes dont work on them... as they query the underlying object, not
 # the remote one. so:
 #
-print type(rsys.maxint) # <int> -- because it's a simple type which is passed by value)
-print type(rsys.path)   # <SyncNetProxy> -- because, after all, it's a netproxy, not a list
+print(type(rsys.maxint)) # <int> -- because it's a simple type which is passed by value)
+print(type(rsys.path))   # <SyncNetProxy> -- because, after all, it's a netproxy, not a list
 
 #
 # now for a demo of packages
@@ -81,9 +81,9 @@ print type(rsys.path)   # <SyncNetProxy> -- because, after all, it's a netproxy,
 #
 parseString = c.modules.xml.dom.minidom.parseString
 x = parseString("<a>lala</a>")
-print x
+print(x)
 x.toxml()
-print x.firstChild.nodeName
+print(x.firstChild.nodeName)
 
 #
 # however, there's a catch when working with packages like that. the way it works is
@@ -138,7 +138,7 @@ except IOError:
 else:
     assert False
 
-print "goodbye"
+print("goodbye")
 
 
 

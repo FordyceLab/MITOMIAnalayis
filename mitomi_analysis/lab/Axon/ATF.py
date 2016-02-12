@@ -125,7 +125,7 @@ class PrintPlate:
 
 	plateSize=384
 	rows='ABCDEFGHIJKLMNOP'
-	columns=range(1,25)
+	columns=list(range(1,25))
 
 	rowCt = len(rows)
 	colCt = len(columns)
@@ -273,16 +273,16 @@ class ATF:
             (ATFstring,version) = requiredHeader1.split('\t')
         except:
             print_exc()
-            raise ATFParseError, 'Couldn\'t parse first line of file: %s' % inFile.name
+            raise ATFParseError('Couldn\'t parse first line of file: %s' % inFile.name)
         
 
         if ATFstring != 'ATF':
-            raise ATFParseError, 'ATF not found at top of file: %s' % inFile.name 
+            raise ATFParseError('ATF not found at top of file: %s' % inFile.name) 
 
         try:
             self.version = float(version)
         except:
-            raise ATFParseError, 'Can\'t determine ATF version: %s' % inFile.name 
+            raise ATFParseError('Can\'t determine ATF version: %s' % inFile.name) 
 
         try:
             requiredHeader2 = inFile.readline().rstrip()
@@ -291,7 +291,7 @@ class ATF:
             self.colCt = int(colCt)
         except:
             print_exc()
-            raise ATFParseError, 'Couldn\'t parse second line of file: %s' % inFile.name 
+            raise ATFParseError('Couldn\'t parse second line of file: %s' % inFile.name) 
 
 
         self.optionalHeaders = {}
@@ -309,7 +309,7 @@ class ATF:
         self.columnNames = dataHeader.split('\t')
         #print len(self.columnNames) ,self.colCt
         if len(self.columnNames) != self.colCt:
-            raise ATFParseError, 'Column count (%s) is different that number of columns found in (%s)' % ( self.colCt,len(self.columnNames))
+            raise ATFParseError('Column count (%s) is different that number of columns found in (%s)' % ( self.colCt,len(self.columnNames)))
 
         for c in range(len(self.columnNames)):
             self.columnNames[c] = self.columnNames[c].rstrip(string.whitespace + '"').lstrip(string.whitespace + '"')
@@ -442,15 +442,15 @@ class ATF:
             EOL = '\r'
 
         if not self._headerCheck():
-            raise ATFIncompleteData, "required header not present"
+            raise ATFIncompleteData("required header not present")
         if not self._columnCheck():
-            raise  ATFIncompleteData, "required column not present"
+            raise  ATFIncompleteData("required column not present")
 
         outlines = []
         outlines.append("ATF\t%3.1f"%self.version)
         outlines.append("%s\t%s"%(len(self.optionalHeaders),self.colCt))
 
-        for field in self.optionalHeaders.keys():
+        for field in list(self.optionalHeaders.keys()):
             if field not in self.headerOrder:
                 self.headerOrder.append(field)
 
@@ -501,10 +501,10 @@ class ATF:
            type(spec) == ListType:
 
             if len(spec) != 3 :
-                raise KeyError, "Block,Column,Row key is the wrong size"
+                raise KeyError("Block,Column,Row key is the wrong size")
 
             if self.BCRidx == None:
-                raise KeyError, "no Block,Column,Row index"
+                raise KeyError("no Block,Column,Row index")
             
             if None not in spec:
                 if spec in self.BCRidx:
@@ -512,7 +512,7 @@ class ATF:
                         rows.append(self.dataLines[i])
             else:
                 (bSpec, cSpec, rSpec) = spec
-                for bcr in self.BCRidx.keys():
+                for bcr in list(self.BCRidx.keys()):
                     if bSpec != None:
                         if bSpec >= 0 and bcr[0] != bSpec:
                             continue
@@ -535,7 +535,7 @@ class ATF:
             
         else:
             if self.IDidx ==  None:
-                raise KeyError, "no ID index"
+                raise KeyError("no ID index")
             if spec in self.IDidx:
                 for i in self.IDidx[spec]:
                     rows.append(self.dataLines[i])
@@ -545,22 +545,22 @@ class ATF:
         """Return a list of ID's common to this ATF and another.
         """
         if not isinstance(atf2,ATF):
-            raise ATFInstanceError, "Both args to commonIDs must be valid ATF objects."
+            raise ATFInstanceError("Both args to commonIDs must be valid ATF objects.")
 
         if self.IDidx == None or \
            atf2.IDidx == None :
-            raise  ATFIncompleteData, "Both ATF objects must have ID columns."
+            raise  ATFIncompleteData("Both ATF objects must have ID columns.")
 
         comIDs = []
 
-        if len(self.IDidx.keys()) >= len(atf2.IDidx.keys()):
+        if len(list(self.IDidx.keys())) >= len(list(atf2.IDidx.keys())):
             shortIdx = atf2.IDidx
             longIdx = self.IDidx
         else:
             shortIdx = self.IDidx
             longIdx = atf2.IDidx
 
-        for id in shortIdx.keys():
+        for id in list(shortIdx.keys()):
             if id in longIdx:
                 comIDs.append(id)            
         return comIDs
@@ -571,21 +571,21 @@ class ATF:
         have IDs that are different than this objects.
         """
         if not isinstance(atf2,ATF):
-            raise ATFInstanceError, "Both args to commonIDs must be valid ATF objects."
+            raise ATFInstanceError("Both args to commonIDs must be valid ATF objects.")
 
         if self.BCRidx == None or \
            atf2.BCRidx == None :
-            raise  ATFIncompleteData, "Both ATF objects must have ID columns."
+            raise  ATFIncompleteData("Both ATF objects must have ID columns.")
 
         mismatchBCRs = []
         for bcr in self.BCRidx:
             if len(self[bcr]) > 1:
-                raise ATFInstanceError, "more than one data record with BCR: %s" % bcr
+                raise ATFInstanceError("more than one data record with BCR: %s" % bcr)
             
             ID = self[bcr][0].ID
 
             if len(self[bcr]) > 1:
-                raise ATFInstanceError, "more than one data record in atf2 with BCR: %s" % bcr
+                raise ATFInstanceError("more than one data record in atf2 with BCR: %s" % bcr)
             elif len (self[bcr]) ==0:
                 continue
             try:
@@ -670,11 +670,11 @@ class ATF:
         elif bcr == None:
             bcr_included = bcr_ID_included
         elif len (bcr_ID_included) < len (bcr_BCR_included):
-            for (rec_bcr, rec) in bcr_ID_included.iteritems():
+            for (rec_bcr, rec) in bcr_ID_included.items():
                 if rec_bcr in bcr_BCR_included:
                     bcr_included[rec_bcr] = rec
         else:
-            for (rec_bcr, rec) in bcr_BCR_included.iteritems():
+            for (rec_bcr, rec) in bcr_BCR_included.items():
                 if rec_bcr in bcr_ID_included:
                     bcr_included[rec_bcr] = rec
         
@@ -699,13 +699,13 @@ class ATF:
                         bcr_excluded[r.BCR] = None
                 
            
-        included_bcr = bcr_included.keys()
+        included_bcr = list(bcr_included.keys())
         # do field sort
         if sortField != None:
             for bcr in included_bcr:
                 sortDict[self[bcr][0][sortField]] = bcr
 
-            sortedKeys = sortDict.keys()
+            sortedKeys = list(sortDict.keys())
             sortedKeys.sort()
             included_bcr = []
             
@@ -763,7 +763,7 @@ class ATF:
         """
         rv = []
         IDregexp = re.compile(pattern)
-        for ID in self.IDidx.keys():
+        for ID in list(self.IDidx.keys()):
             if IDregexp.search(ID) == None:
                 continue
             rv.append(ID)
@@ -810,7 +810,7 @@ class GAL(ATF):
         self.requiredColumnPositions.append((4,"Name"))
         self.requiredColumnPositions.append((3,"ID"))
         if inFileName != None and self.Type[:17] !=  'GenePix ArrayList':
-                raise ATFInstanceError, "File (%s) is not recognized as a 'GenePix ArrayList' file." % inFileName
+                raise ATFInstanceError("File (%s) is not recognized as a 'GenePix ArrayList' file." % inFileName)
 
         if 'BlockCount' in self.optionalHeaders:
             self.blockCount = self.optionalHeaders['BlockCount']
@@ -819,9 +819,9 @@ class GAL(ATF):
 
         self.blocks = []
 
-        for k,v in self.optionalHeaders.items():
+        for k,v in list(self.optionalHeaders.items()):
             if re.match('Block[0-9]+$',k) != None:
-                v = map(int,v.split(', '))
+                v = list(map(int,v.split(', ')))
                 self.blocks.append(Block(k,*v))
 
 
@@ -866,7 +866,8 @@ class Block:
 		for r in range(self.numberOfRows):
 			self.data.append([None] * self.numberOfCols)
 
-	def contents (self,(pos)):
+	def contents (self, xxx_todo_changeme):
+		(pos) = xxx_todo_changeme
 		return self.data[pos[0]-1][pos[1]-1]
 
 	def addSpot (self,spotData):
@@ -913,7 +914,7 @@ class GPR(ATF):
         self.requiredColumnPositions.append((4,"ID"))
         self.dataPercision = 3
         if inFileName != None and self.Type[:15] !=  'GenePix Results' :
-            raise ATFInstanceError, "File (%s) is not recognized as a 'GenePix Results' file." % inFileName
+            raise ATFInstanceError("File (%s) is not recognized as a 'GenePix Results' file." % inFileName)
 
             
     
@@ -927,9 +928,8 @@ class DataRecord (dict):
             # make the record form text
             data = lineText.split('\t',self.myATF.colCt - 1)
             if len(data) != self.myATF.colCt:
-                print data
-                raise ATFParseError, \
-                      'Column count (%s) is different that number of columns found (%s).' % (self.myATF.colCt, len(data))
+                print(data)
+                raise ATFParseError('Column count (%s) is different that number of columns found (%s).' % (self.myATF.colCt, len(data)))
             # pack my dictionary
             for i in range(len(data)):
                 key = self.myATF.columnNames[i]
@@ -948,7 +948,7 @@ class DataRecord (dict):
 
 
         if self.ID in uid_parameters:
-            for (key,value) in  uid_parameters[self.ID].iteritems():
+            for (key,value) in  uid_parameters[self.ID].items():
                 self[key] = value
 
         self.BCR = (self.Block, self.Column, self.Row)
@@ -972,11 +972,11 @@ class DataRecord (dict):
         return '\t'.join(outFields)
 
     def __getattr__(self,spec):
-        if self.has_key(spec):
+        if spec in self:
             return self[spec]
         else:
-            print self.__dict__.keys()
-            raise AttributeError, "DataRecord has no %s column." % spec
+            print(list(self.__dict__.keys()))
+            raise AttributeError("DataRecord has no %s column." % spec)
 
     
     def __eq__ (self,rec2):

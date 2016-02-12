@@ -2,8 +2,8 @@
 various helper functions
 """
 import sys
-import cPickle as pickle
-from Builtins import isinstance
+import pickle as pickle
+from .Builtins import isinstance
 from Rpyc.Lib import orig_isinstance
 from Rpyc.NetProxy import NetProxy, _get_conn
 from types import CodeType as code, FunctionType as function
@@ -24,33 +24,33 @@ def getconn(obj):
 def _dump_function(func):
     """serializes a function"""
     func_info = (
-        func.func_name,
-        func.func_defaults,
-        func.func_closure,        
+        func.__name__,
+        func.__defaults__,
+        func.__closure__,        
     )
     code_info = (
-        func.func_code.co_argcount,
-        func.func_code.co_nlocals,
-        func.func_code.co_stacksize,
-        func.func_code.co_flags,
-        func.func_code.co_code,
-        func.func_code.co_consts,
-        func.func_code.co_names,
-        func.func_code.co_varnames,
-        func.func_code.co_filename,
-        func.func_code.co_name,
-        func.func_code.co_firstlineno,
-        func.func_code.co_lnotab,
-        func.func_code.co_freevars,
-        func.func_code.co_cellvars,
+        func.__code__.co_argcount,
+        func.__code__.co_nlocals,
+        func.__code__.co_stacksize,
+        func.__code__.co_flags,
+        func.__code__.co_code,
+        func.__code__.co_consts,
+        func.__code__.co_names,
+        func.__code__.co_varnames,
+        func.__code__.co_filename,
+        func.__code__.co_name,
+        func.__code__.co_firstlineno,
+        func.__code__.co_lnotab,
+        func.__code__.co_freevars,
+        func.__code__.co_cellvars,
     )
-    return pickle.dumps((code_info, func_info, func.func_doc), pickle.HIGHEST_PROTOCOL)
+    return pickle.dumps((code_info, func_info, func.__doc__), pickle.HIGHEST_PROTOCOL)
 
 def _load_function(pickled_func, globals):
     """recreates a serialized function"""
     code_info, func_info, doc = pickle.loads(pickled_func)
     func = function(code(*code_info), globals, *func_info)
-    func.func_doc = doc
+    func.__doc__ = doc
     return func
 
 def obtain(proxy):

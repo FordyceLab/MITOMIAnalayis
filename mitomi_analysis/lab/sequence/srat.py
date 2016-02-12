@@ -30,12 +30,12 @@ Usage:
 
 import os, sys
 import getopt
-import solexa
-import fasta
+from . import solexa
+from . import fasta
 import copy
 from utils.timeprofile import *
-from compact import CompactSequence
-from compact import N
+from .compact import CompactSequence
+from .compact import N
 
 class FakeProfiler:
     agg = []
@@ -66,11 +66,11 @@ USE_COMPACT_SEQUENCE = False
 
 def log( text, p=False, s=False ):
     if p and DEBUG_PROFILER:
-        print text
+        print(text)
     elif s and DEBUG_STATS:
-        print text
+        print(text)
     elif DEBUG:
-        print text
+        print(text)
         
 #############
 
@@ -100,7 +100,7 @@ class FastaImporter( SequenceImporter ):
     def parse( self, filename ):
         """Given a name for a FASTA file, returns the sequences therein"""
         fastas = fasta.FastaIterator( open( filename, "r" ) )
-        return map( lambda x: x.sequence, fastas )
+        return [x.sequence for x in fastas]
 
 class FlatFileImporter( SequenceImporter ):
     """Reads in a file containing one sequence per line."""
@@ -110,7 +110,7 @@ class FlatFileImporter( SequenceImporter ):
         inF = open( filename, "r" )
         lines = inF.readlines()
         inF.close()
-        return map( lambda x: x.strip(), lines )
+        return [x.strip() for x in lines]
 
 class BustardImporter( SequenceImporter ):
     """Reads in a Solexa formatted sequence file."""
@@ -241,7 +241,7 @@ class NmerIndexing:
 
     def __str__( self ):
         """Shows the entire indexing table."""
-        return "\n".join( map( lambda x: str( "%s\t[ %s ]" % ( x, ", ".join( map( str, self.nmers[x] ) ) ) ) , self.nmers.keys() ) )
+        return "\n".join( [str( "%s\t[ %s ]" % ( x, ", ".join( map( str, self.nmers[x] ) ) ) ) for x in list(self.nmers.keys())] )
 
     def buildFromReadManager( self ):
         """Builds the internal lookup table
@@ -265,7 +265,7 @@ class NmerIndexing:
         PROFILER.mark('endIndexing')
         log("Elapsed Indexing Time: %.6f" % float(PROFILER.diff('startIndexing','endIndexing')), p=True )
         log("Prefix Table Occupancy: %d/%d (%.2f)" % ( len( self.nmers ), pow( 5, self.n ), float(len(self.nmers))/float(pow(5,self.n)) ), s=True )
-        sumOfLengths = sum( map( lambda x: len(x[0])+len(x[1]), self.nmers.values() ) )
+        sumOfLengths = sum( [len(x[0])+len(x[1]) for x in list(self.nmers.values())] )
         numLengths = len(self.nmers)
         log("Average Entry Length: %.2f" % (float(sumOfLengths) / float(numLengths)), s=True )
 
@@ -530,7 +530,7 @@ def main(argv=None):
     try:
         try:
             opts, args = getopt.getopt(argv[1:], "hx:m:n:", ["help"])
-        except getopt.error, msg:
+        except getopt.error as msg:
             raise Usage(msg)
         for o, a in opts:
             if o in ("-h", "--help"):
@@ -539,9 +539,9 @@ def main(argv=None):
         if len(args) != 2:
             raise Usage("Invalid number of arguments")
         process( dict(opts), args )
-    except Usage, err:
-        print >>sys.stderr, err.msg
-        print >>sys.stderr, "for help use --help"
+    except Usage as err:
+        print(err.msg, file=sys.stderr)
+        print("for help use --help", file=sys.stderr)
         return 2
 
 if __name__ == "__main__":

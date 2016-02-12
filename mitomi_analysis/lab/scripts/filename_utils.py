@@ -54,9 +54,9 @@ def rename_files(directory,namefile):
                suffix = "."+item.split(".")[1]+"."+item.split(".")[2]
                #print "suffix3 = "+suffix
           else:
-               print "Something funny is going on with the filenames!"
+               print("Something funny is going on with the filenames!")
                
-          dummy_var = name_dict.has_key(root_name)
+          dummy_var = root_name in name_dict
           if dummy_var == True:
                #print "Filename root IS in dictionary!"
                #print "root_name = "+root_name
@@ -67,7 +67,7 @@ def rename_files(directory,namefile):
                #print "new_name = "+new_name
                os.rename(old_name,new_name)
           else:
-               print "Filename root is not in dictionary!"
+               print("Filename root is not in dictionary!")
 
 
 ##############################################

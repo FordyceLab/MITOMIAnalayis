@@ -12,12 +12,12 @@ import sys
 import re
 import time
 import types
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
-from __init__ import *
+from .__init__ import *
 
 from datetime import datetime
-from StringIO import StringIO
+from io import StringIO
 from traceback import print_exc
 
 class GenBank_Lookup_Error (Exception):
@@ -49,7 +49,7 @@ class Record(StringSequence):
         forward to the beginning of the next record (if any) of to EOF.
         """
         if recordContent != None:
-            if type(recordContent) in types.StringTypes:
+            if type(recordContent) in (str,):
                 self.gbr=recordContent
             else:
                 recFound = False
@@ -127,7 +127,7 @@ class Record(StringSequence):
     def fasta(self):
         """ return a fasta Record
         """
-        import fasta
+        from . import fasta
         return fasta.Record(title=str(self.GI),sequence=self.sequence())
 
 class Feature :

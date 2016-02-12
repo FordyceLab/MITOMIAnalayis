@@ -3,7 +3,7 @@
 #
 #
 #
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import sys
 import os.path
 import xml.dom.minidom
@@ -16,7 +16,7 @@ retType = 'fasta'
 
 def fetchBatchByUI(batch,eDB,retType):
      fQry = fURL%(eDB) + '&rettype=%s' %(retType) + ncbiID+'&id='+','.join(batch)
-     sys.stdout.write(urllib.urlopen(fQry).read())
+     sys.stdout.write(urllib.request.urlopen(fQry).read())
      sys.stdout.flush()
 
 eDB = 'NucCore'

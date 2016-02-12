@@ -37,7 +37,8 @@ from copy import copy
 
 import MySQLdb
 
-from exceptions import *
+from .exceptions import *
+from functools import reduce
 
 YES = True
 NO = False
@@ -78,7 +79,7 @@ def loadPylab ():
         import pylab
         pylabLoaded = True
     except:
-        print "Can't load plotting library"
+        print("Can't load plotting library")
 
 
 def SqlAmericanDate (americanDate):
@@ -187,11 +188,11 @@ def unique(iteratable,remove=[]):
     '''
 
     l = list(iteratable)
-    rd=dict(zip(l,[None]*len(l)))
+    rd=dict(list(zip(l,[None]*len(l))))
     for thing in remove:
         if thing in rd:
             del rd[thing]
-    return rd.keys()
+    return list(rd.keys())
 
     
 def flatten(iterable):
@@ -273,7 +274,7 @@ class db:
         self.table_names = self.GetTableNames()
         if getTables != NO:
             for tn in self.table_names:
-                if not self.tables.has_key(tn):
+                if tn not in self.tables:
                     self.tables[tn] = Table(db=self, name=tn)
 
 
@@ -323,7 +324,8 @@ class db:
                                                       db=self.name, read_default_file=self.cnf)
                         break
                     
-                except MySQLdb.OperationalError,MySQLdb.DatabaseError:
+                except MySQLdb.OperationalError as xxx_todo_changeme:
+                    MySQLdb.DatabaseError = xxx_todo_changeme
                     retryAttempt += 1
                     if retryAttempt > self.retryTimes:
                         raise
@@ -358,7 +360,7 @@ class db:
         if getTables != NO:
             self.tables = {}
             for tn in self.table_names:
-                if not self.tables.has_key(tn):
+                if tn not in self.tables:
                     self.tables[tn] = Table(db=self, name=tn)
 
 
@@ -408,7 +410,7 @@ class db:
             tempCursor.executemany(sqlText,parameters)
         else:
             start = 0
-            indicies = range(0,len(parameters),chunkSize)+[None]
+            indicies = list(range(0,len(parameters),chunkSize))+[None]
             for chunk in range(1,len(indicies)):
                 end = indicies[chunk]
                 if end != None:
@@ -428,7 +430,7 @@ class db:
 
         if type(batch) == IntType and batch > 0:
             if type(batch) != IntType:
-                raise TypeError, "batchSize must be an integer"
+                raise TypeError("batchSize must be an integer")
             selectQry += ' LIMIT %d OFFSET %d' % (batch,batchSize*(batch-1))
 
 
@@ -467,7 +469,7 @@ class db:
         tempCursor = self.cursor()
         tempCursor.execute(selectQry,parameters)
 
-        fieldNames = map(first,tempCursor.description)
+        fieldNames = list(map(first,tempCursor.description))
         return (fieldNames,tempCursor.fetchall())
 
 
@@ -481,12 +483,12 @@ class db:
         tempCursor = self.cursor()
         tempCursor.execute(selectQry,parameters)
         
-        fieldNames = map(first,tempCursor.description)
+        fieldNames = list(map(first,tempCursor.description))
         rows = tempCursor.fetchall()
 
         fieldNames = [fieldNames] * len(rows)
 
-        return map(dict,map(zip,fieldNames,rows))
+        return list(map(dict,list(map(zip,fieldNames,rows))))
 
 
     def uniqueKeyFieldDict(self,keyFieldName,selectQry,parameters=None):
@@ -499,7 +501,7 @@ class db:
         getKeyValue = lambda x: x[keyFieldName]
         listOfDicts = self.fieldValueDict(selectQry,parameters)
 
-        return dict(zip(map(getKeyValue,listOfDicts),listOfDicts))
+        return dict(list(zip(list(map(getKeyValue,listOfDicts)),listOfDicts)))
 
     def generalKeyFieldDict(self,keyFieldName,selectQry,parameters=None):
         """Return a dictionary of _lists_ of matching rows, expressed as
@@ -566,7 +568,7 @@ class db:
 
 
     def __getitem__ (self,table):
-        if not self.tables.has_key(table):
+        if table not in self.tables:
             self.tables[table] = Table(db=self, name=table)
         return self.tables[table]
 
@@ -574,7 +576,7 @@ class db:
         try:
             return self.tables[table]
         except:
-            if table in self.table_names and not self.tables.has_key(table):
+            if table in self.table_names and table not in self.tables:
                 self.tables[table] = Table(db=self, name=table)
                 return self.tables[table]
             else:
@@ -584,11 +586,11 @@ class db:
         """return the matching Value_Text from the Global_Settings table, if any.
         """
         if 'Global_Settings' not in self.tables:
-            raise KdbomDatabaseError, "Database has no Global_Settings table"
+            raise KdbomDatabaseError("Database has no Global_Settings table")
         else:
             rows = self.tables['Global_Settings'](Name=settingName)
             if len(rows) == 0:
-                raise KdbomLookupError, "Global_Settings table has no '%s' setting" % settingName
+                raise KdbomLookupError("Global_Settings table has no '%s' setting" % settingName)
             else:
                 if len(rows) == 1:
                     return rows[0].Value_Text
@@ -601,7 +603,7 @@ class db:
 
         rv = [ """CREATE DATABASE `%s` """ % newDBName ]
 
-        for t in self.tables.values():
+        for t in list(self.tables.values()):
             rv.append(t.SQLdefinition)
         return ';\n\n'.join(rv)
 
@@ -689,7 +691,7 @@ class Table:
             if relative == rel.child.table:
                 return rel.join2child()
 
-        raise Relationship_Error, "%s not an immediate relative of %s" % (relative, self)
+        raise Relationship_Error("%s not an immediate relative of %s" % (relative, self))
             
 
 
@@ -897,8 +899,8 @@ class Table:
         else:
             ignore = 'IGNORE'
         
-        fields = Values.keys()
-        values = Values.values()
+        fields = list(Values.keys())
+        values = list(Values.values())
 
         fieldList = "`" + string.join(fields,"`, `") + "`"
         valueSub = string.join(['%s']*len(values),",")
@@ -944,10 +946,10 @@ class Table:
             
         else:
             for start in range(0,len(rows),chunkSize):
-                print len(rows[start:start+chunkSize])
+                print(len(rows[start:start+chunkSize]))
                 self.db.executemany(qryText,
-                                    map(callback,
-                                        rows[start:start+chunkSize]),
+                                    list(map(callback,
+                                        rows[start:start+chunkSize])),
                                     disableFKcheck=disableFKcheck,
                                     chunkSize=chunkSize)
 
@@ -974,7 +976,7 @@ class Table:
         else:
             inputName = fieldName = filterNames
 
-        if not formData.has_key(inputName) or \
+        if inputName not in formData or \
                formData[inputName] == 'filter' or \
                formData[inputName] == '':
             # no form data for this field
@@ -1023,8 +1025,8 @@ class Table:
         if criteria != {}:
             Values = criteria
             
-        fields = Values.keys()
-        values = Values.values()
+        fields = list(Values.keys())
+        values = list(Values.values())
 
         wheres = []
         for i in range(len(fields)):
@@ -1052,8 +1054,8 @@ class Table:
         if criteria != {}:
             Values = data
             
-        fields = Values.keys()
-        values = Values.values()
+        fields = list(Values.keys())
+        values = list(Values.values())
 
         wheres = []
         for i in range(len(fields)):
@@ -1081,7 +1083,7 @@ class Table:
         or as criteria dictionary"""
 
         if sum((iterator,returnFirstRecord,returnLastRecord,expectOneRecord)) > 1:
-            raise ValueError, ("Only one of these flasg may be set for Table.record retreival\n"
+            raise ValueError("Only one of these flasg may be set for Table.record retreival\n"
                                "may be set: iterator,returnFirstRecord,returnLastRecord,expectOneRecord")
         rv=[]
         if criteria != {}:
@@ -1107,13 +1109,13 @@ class Table:
          
         if type(batch) == IntType and batch > 0:
             if type(batch) != IntType:
-                raise TypeError, "batchSize must be an integer"
+                raise TypeError("batchSize must be an integer")
 
         recCount = cur.execute(select)
 
         if not iterator:
             if expectOneRecord and recCount  > 1:
-                raise KdbomError, "More that one record returned"
+                raise KdbomError("More that one record returned")
 
             selectrows =  cur.fetchall()
             if not returnRecords:
@@ -1138,8 +1140,8 @@ class Table:
         
         if criteria != {}:
             Values = criteria
-        fields = [self.fields[fName] for fName in Values.keys()]
-        values = Values.values()
+        fields = [self.fields[fName] for fName in list(Values.keys())]
+        values = list(Values.values())
         for i in range(len(fields)):
             if values[i] == None:
                 wheres.append("`%s` IS NULL" % (fields[i].name))
@@ -1154,7 +1156,7 @@ class Table:
 
         if type(batch) == IntType and batch > 0:
             if type(batch) != IntType:
-                raise TypeError, "batchSize must be an integer"
+                raise TypeError("batchSize must be an integer")
             limitClause = ' LIMIT %d OFFSET %d' % (batchSize,batchSize*(batch-1))
         else:
             limitClause = ''
@@ -1177,7 +1179,7 @@ class Table:
         elif type(orderBy) in (ListType,TupleType):
             obTxt = ', '.join(map(self._buildOrderBy,orderBy))
         else:
-            raise ValueError, ("orderBy must be a string, field or sequence of those, got type %s"
+            raise ValueError("orderBy must be a string, field or sequence of those, got type %s"
                                % str(type(orderBy)))
 
         if obTxt == '':
@@ -1233,9 +1235,9 @@ class Table:
                                    (self.db.escape(newTableName)))
 
         if (tblCount != 0 and not useExistingTable):
-            raise KdbomError, "Table exists: %s" % (newTableName)
+            raise KdbomError("Table exists: %s" % (newTableName))
         elif (useExistingTable and tblCount != 1):
-            raise KdbomError, "Table doesn't exist: %s" % (newTableName)
+            raise KdbomError("Table doesn't exist: %s" % (newTableName))
         
 
 
@@ -1284,12 +1286,12 @@ class Table:
             rec = newTable[pk]
             data = rec.data
             
-            for k in data.keys():
+            for k in list(data.keys()):
                 if not k in useExistingFields:
                     del data[k]
 
-            fields = data.keys()
-            values = data.values()
+            fields = list(data.keys())
+            values = list(data.values())
 
             wheres = []
             for i in range(len(fields)):
@@ -1423,7 +1425,7 @@ class field:
 
                 # if parent table does not exist
                 # build it
-                if not self.db.tables.has_key(fTable) :
+                if fTable not in self.db.tables :
                     self.db.tables[fTable] = Table(db=self.db, name=fTable)
 
                 # add relationship information
@@ -1495,7 +1497,7 @@ class field:
         if operation not in ('min','max','sum','avg','std',
                              'count','MIN','MAX','SUM','AVG',
                              'STD','COUNT'):
-            raise ArgumentError ,"Aggregate function operattion must be one of min, max, sum, avg, std or count"
+            raise ArgumentError("Aggregate function operattion must be one of min, max, sum, avg, std or count")
         
         rv = []
         whereClause = ''
@@ -1675,7 +1677,7 @@ class record:
 
             selectrows =  cur.fetchall()
             if justPKvalues:
-                return map(collapseSingleton,selectrows)
+                return list(map(collapseSingleton,selectrows))
             else:
                 for row in selectrows:
                     rv.append(record(table=foreginTable, PKvalue=row[0]))
@@ -1769,10 +1771,10 @@ class record:
         """Update the fields of a record with the values
         in the data dictionary"""
         try:
-            for key in data.keys():
+            for key in list(data.keys()):
                 self.__setattr__(key,data[key])
 
-        except Exception, details:
+        except Exception as details:
             self.db.con.rollback()
             raise
         
@@ -1937,7 +1939,7 @@ class KSqlObject:
 
             if criteria != {}:
                 if self._table == None:
-                    raise KdbomUsageError, "Can't load SQL data. Table unknown."
+                    raise KdbomUsageError("Can't load SQL data. Table unknown.")
 
                 try:                    
                     self.load(criteria=criteria)
@@ -1956,12 +1958,12 @@ class KSqlObject:
                     KSqlCache[self.__class__] = []
                 else:
                     while len(KSqlCache[self.__class__]) >= cacheSize:
-                        for k,v in KSqlCacheIdx[self.__class__].items():
+                        for k,v in list(KSqlCacheIdx[self.__class__].items()):
                             if v == len(KSqlCache[self.__class__]):
                                 del KSqlCacheIdx[self.__class__][k]
                                 break
                             del KSqlCache[self.__class__][-1]
-                        for k,v in KSqlCacheIdx[self.__class__].items():
+                        for k,v in list(KSqlCacheIdx[self.__class__].items()):
                             KSqlCacheIdx[self.__class__][k] += 1
 
                 KSqlCache[self.__class__].insert(0,self)
@@ -1985,10 +1987,10 @@ class KSqlObject:
         """
         self._record=None
         if self._deleated:
-            raise KdbomUsageError, "KSqlObjedt has been deleted"
+            raise KdbomUsageError("KSqlObjedt has been deleted")
         
         if self._table == None:
-            raise KdbomDatabaseError, "Can't load SQL data. Table unknown."
+            raise KdbomDatabaseError("Can't load SQL data. Table unknown.")
         else:
             self._db = self._table.db
 
@@ -1997,8 +1999,7 @@ class KSqlObject:
         # kdbom.record object has been specified
         if isinstance(criteria,record):
             if criteria.table != self._table:
-                raise KdbomDatabaseError,\
-                      "Can't make KSqlObject from kdbom record, tables do not match"
+                raise KdbomDatabaseError("Can't make KSqlObject from kdbom record, tables do not match")
             self._record = criteria
             self.SQLfields = self._record.data
 
@@ -2007,7 +2008,7 @@ class KSqlObject:
             try:
                 self._record = record(table=self._table,PKvalue=criteria)
             except:
-                raise KdbomLookupError , "no matching MySQL record found"
+                raise KdbomLookupError("no matching MySQL record found")
 
         # _strField Lookup
         elif self._strField != None and type(criteria) not in (DictType,TupleType,ListType):  
@@ -2018,7 +2019,7 @@ class KSqlObject:
                     self._record=self._table(criteria={self._strField.name:criteria},
                                              expectOneRecord=True)[0]
             except IndexError:
-                raise ValueError , "Record Not Found. Table: %s, Record Name: %s" %(self.__class__,criteria)
+                raise ValueError("Record Not Found. Table: %s, Record Name: %s" %(self.__class__,criteria))
 
         # a tuple like (SQL query,(params))
         # has been specified 
@@ -2050,7 +2051,7 @@ class KSqlObject:
         # record has been found, or maybe not
         
         if type(self._record) == NoneType:
-            raise KdbomLookupError , "no matching MySQL record found"
+            raise KdbomLookupError("no matching MySQL record found")
         else:
             self.SQLfields = self._record.data
             self.update = self._record.update
@@ -2087,7 +2088,7 @@ class KSqlObject:
                 self._record.update(self.SQLfields)
                 self._dirty = False
             except:
-                raise KdbomDatabaseError, ("SQL update failed for the following table and data-\n%s.%s:%s" %
+                raise KdbomDatabaseError("SQL update failed for the following table and data-\n%s.%s:%s" %
                                               (self._db.name,self._table.name,self.SQLfields))
 
     # save is an alias for store
@@ -2129,7 +2130,7 @@ class KSqlObject:
         value = None
 
         if 'SQLfields' not in self.__dict__:
-            raise KdbomProgrammingError, "Object has no SQLfields"
+            raise KdbomProgrammingError("Object has no SQLfields")
         
         if name in self.SQLfields:
             value = self.SQLfields[name]
@@ -2138,7 +2139,7 @@ class KSqlObject:
         if foundIt:
             return value
         else:
-            raise AttributeError, str(name)
+            raise AttributeError(str(name))
 
 
     def __setattr__ (self,name,value):
@@ -2222,7 +2223,7 @@ class KSqlObject:
             return None
         
         rv = { 'ID' : self.ID() }
-        for k,v in self.__dict__.items():
+        for k,v in list(self.__dict__.items()):
             if k in ('_db','_record','_strField'):
                 continue
             if type(v) == MethodType:
@@ -2238,7 +2239,7 @@ class KSqlObject:
         del state['ID']
         self._db=self._table.db
 
-        for k,v, in state.items():
+        for k,v, in list(state.items()):
             self.__dict__[k] = v
         
 
@@ -2276,7 +2277,7 @@ class KSqlObject:
         """Returns a randomly selected instance of this class.
         """
 
-        for k,v in criteria.items():
+        for k,v in list(criteria.items()):
             if k not in Values:
                 Values[k]=v
 
@@ -2315,9 +2316,9 @@ class KSqlObject:
             return [cls.friendOf(f) for f in friend ]
         else:
             if not isinstance(friend,KSqlObject):
-                raise ValueError, "friend must be a KSqlObject.  %s ,given instead" % friend.__class__
+                raise ValueError("friend must be a KSqlObject.  %s ,given instead" % friend.__class__)
 
-            if cls._table.primary_key.name in friend._table.fields.keys():
+            if cls._table.primary_key.name in list(friend._table.fields.keys()):
                 # real friends have their primary keys as foreign keys
                 # in this table.
                 keyName = cls._table.primary_key.name
@@ -2361,7 +2362,7 @@ class KSqlObject:
 
         for c in self._record.children(foreignTable):
             rv[foreignClass(c)]=None
-        return rv.keys()
+        return list(rv.keys())
             
 
     def parents(self,foreignClass):
@@ -2374,7 +2375,7 @@ class KSqlObject:
         
         for c in self._record.parents(foreignTable,collapseSingleton=False):
             rv[foreignClass(c)]=None
-        return rv.keys()
+        return list(rv.keys())
 
     def relatives(self,foreignClass):
         """Return child and parent KSqlObjects.
@@ -2386,7 +2387,7 @@ class KSqlObject:
 
         for c in self._record.relatives(foreignTable):
             rv[foreignClass(c)] = None
-        return rv.keys()
+        return list(rv.keys())
 
 
     def applyTag(self, tagStr):
@@ -2403,7 +2404,7 @@ class KSqlObject:
 
         ct = self._tagLinkTable.count({self._table.name+'_ID': self.ID(),
                                        self._tagTable.name+'_ID':flagID})
-        if ct == 0L:
+        if ct == 0:
             self._tagLinkTable.insert({self._table.name+'_ID': self.ID(),
                                        self._tagTable.name+'_ID':flagID})
         else:
@@ -2417,7 +2418,7 @@ class KSqlObject:
             flagID = self._tagTable(Name=tagStr)[0].PKvalue
             ct = self._tagLinkTable.count({self._table.name+'_ID': self.ID(),
                                            self._tagLinkTable.name+'_ID':flagID})
-            if ct >= 1L:
+            if ct >= 1:
                 return True
             else:
                 return False
@@ -2445,7 +2446,7 @@ class KSqlObject:
             flagID = self._tagTable(Name=tagStr)[0].PKvalue
             ct = self._tagLinkTable.delete({self._table.name+'_ID': self.ID(),
                                             self._tagTable.name+'_ID':flagID})
-            if ct >= 1L:
+            if ct >= 1:
                 return True
             else:
                 return False
@@ -2506,7 +2507,7 @@ ON tht%d.%s_ID = %s.%s_ID""" %
         qry = "SELECT DISTINCT %s.%s_ID FROM %s\n%s\nWHERE %s" % (cls._table.name,cls._table.name,cls._table._dbQualName(),
                                                                   joinClause,whereClause)
         if showQuery:
-            print qry
+            print(qry)
         return ksqlobject_generator(cls,qry)
         
 
@@ -2539,7 +2540,7 @@ def ksqlobject_generator(subclass,query=None,params=(),db=None,criteria={},
     #whereLiteral=whereLiteral.replace('_','\_')  # not needed ?
     whereLiteral=whereLiteral.replace('%','%%%%') # needed to protect from python
 
-    for k,v in criteria.items():
+    for k,v in list(criteria.items()):
         if k not in Values:
             Values[k]=v
 
@@ -2600,7 +2601,7 @@ def insert_KSqlObject(table=None,mustHave=(),
 
     for needs in mustHave:
         if needs not in data:
-            raise KdbomDatabaseError , needs + ' required'
+            raise KdbomDatabaseError(needs + ' required')
 
     _id = table.insert(data)
 
@@ -2642,7 +2643,7 @@ class relationship:
         """Table to table relationship superclass"""
         field_class = field().__class__
         if parent.__class__ != field_class or child.__class__ != field_class:
-            raise TypeError, "Parent and child must be fields"
+            raise TypeError("Parent and child must be fields")
         
         self.parent = parent
         self.child = child
@@ -2684,7 +2685,7 @@ class one2many (relationship):
     def __init__ (self,parent=None, child=None):
         relationship.__init__(self,parent=parent, child=child)
         if not self.parent.isUnique:
-            raise Relationship_Error, "Parent must not have duplicate values"
+            raise Relationship_Error("Parent must not have duplicate values")
         
 
         #count offspring
@@ -2721,7 +2722,7 @@ class many2many (relationship):
         
 def PackDict(keys,values):
     if len(keys) != len(values):
-        raise KeyError, "Keys and values must be same length"
+        raise KeyError("Keys and values must be same length")
     else:
         rv = {}
         count = len(values)
@@ -2737,7 +2738,7 @@ def connection (host=defaulthost, user=defaultuser, passwd=defaultpw,db=defaultD
 
 
 def main ():
-    print __doc__
+    print(__doc__)
     return 0
 
 if __name__ == '__main__':

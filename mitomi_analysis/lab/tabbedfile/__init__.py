@@ -42,9 +42,9 @@ class FieldSpec:
         is raised.
         """
         if type(name) != StringType:
-            raise FieldDefinitionError, "field name must be a string."
+            raise FieldDefinitionError("field name must be a string.")
         if type(typeSpec) != StringType:
-            raise FieldDefinitionError, "field typeSpec must be a string."
+            raise FieldDefinitionError("field typeSpec must be a string.")
 
         if RE_NOT_ALPHANUM.search(name) != None:
             warnings.warn (
@@ -58,7 +58,7 @@ class FieldSpec:
                 """field name no charters left! A random name hass ben assigned to the field: %s""" %name)
 
         if name in PY_KEYWORDS:
-            raise FieldDefinitionError, (
+            raise FieldDefinitionError(
                 "field name '%s' is a python keyword - THAT IS FORBIDDEN! " % name)
            
             
@@ -74,18 +74,18 @@ class FieldSpec:
             self._fromTxt=float
             self._toTxt = str
         elif typeSpec == 'date' or typeSpec.startswith('date '):
-            raise NotImplementedError, 'date fields not supported yet'
+            raise NotImplementedError('date fields not supported yet')
         elif typeSpec.startswith('datetime '):
-            raise NotImplementedError, 'datetime fields not supported yet'
+            raise NotImplementedError('datetime fields not supported yet')
         elif typeSpec.startswith('list'):
-            raise NotImplementedError, 'list fields not supported yet' 
+            raise NotImplementedError('list fields not supported yet') 
         elif typeSpec.startswith('dict'):
-            raise NotImplementedError, 'dict fields not supported yet' 
+            raise NotImplementedError('dict fields not supported yet') 
         elif typeSpec == '' or typeSpec == 'str':
             self._fromTxt=lambda x: x
             self._toTxt=lambda x: x
         else:
-            raise FieldDefinitionError, "type specifier '%s' unknown" % typeSpec
+            raise FieldDefinitionError("type specifier '%s' unknown" % typeSpec)
 
 
 
@@ -139,8 +139,8 @@ class Record:
         self.data={}
         self.tableFile = tableFile
         self.fieldSpecs = tableFile.fieldSpecs
-        self.fieldDict = dict(zip(map(lambda x: x.name, self.fieldSpecs),
-                              self.fieldSpecs))
+        self.fieldDict = dict(list(zip([x.name for x in self.fieldSpecs],
+                              self.fieldSpecs)))
         self.fields=[]
         
 
@@ -157,10 +157,10 @@ class Record:
                     self.data[fieldDef.name]=myData
                     self.fields.append(myData)
                 except ValueError:
-                    raise FieldParseError, ("Error converting '%s' to '%s' on line %d of %s" %
+                    raise FieldParseError("Error converting '%s' to '%s' on line %d of %s" %
                                             (rawFields[i],self.fieldSpecs[i].typeSpec,
                                              tableFile._fileLine,tableFile.rawFile.name))
-        for k in self.fieldDict.keys():
+        for k in list(self.fieldDict.keys()):
             if k not in self.data:
                 self.data[k]=None
 
@@ -189,7 +189,7 @@ class Record:
         if name in self.data:
             return self.data[name]
         else:
-            raise AttributeError, str(name)
+            raise AttributeError(str(name))
 
 
     def __setattr__(self,name,value):
@@ -278,11 +278,11 @@ class TabbedFile :
                 
             elif type(fileOrPath) == StringType:
                 if not os.access(fileOrPath,os.R_OK):
-                    raise IOError ,"Couldn't open file: %s" % fileOrPath
+                    raise IOError("Couldn't open file: %s" % fileOrPath)
                 self.rawFile=file(fileOrPath)
 
             else:
-                raise IOError ,("Couldn't open file: %s.  fileOfPath must be a string or a file object."
+                raise IOError("Couldn't open file: %s.  fileOfPath must be a string or a file object."
                                 % fileOrPath)
             
             bolPos=self.rawFile.tell()
@@ -352,9 +352,9 @@ class TabbedFile :
             fields = (fields,)
 
         if len(fields) == 1:
-            return map(lambda x: x[fields[0]],self.records)
+            return [x[fields[0]] for x in self.records]
         else:
-            return map(self.getFields, fields)
+            return list(map(self.getFields, fields))
                 
 
     def parse(self):
@@ -370,9 +370,8 @@ class TabbedFile :
         Records are provided in the current, sorted or not, order. 
         """
         rLines = self.BOFcommentLines[:]
-        rLines.append('\t'.join(map(lambda x: "%s %s" % (x.name,x.typeSpec),
-                                    self.fieldSpecs)))
-        rLines.extend(map(str,self.records))
+        rLines.append('\t'.join(["%s %s" % (x.name,x.typeSpec) for x in self.fieldSpecs]))
+        rLines.extend(list(map(str,self.records)))
         rLines.append('')
         return '\n'.join(rLines)
         
@@ -434,9 +433,9 @@ class TabbedFile :
 
         rv = []
         if rows == None:
-            rows = range(len(self))
+            rows = list(range(len(self)))
         if cols == None:
-            cols = range(len(self[0]))
+            cols = list(range(len(self[0])))
 
         for y in rows:
             row = []

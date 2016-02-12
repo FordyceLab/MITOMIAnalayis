@@ -8,14 +8,14 @@ $Id: fasta.py,v 1.22 2008/04/17 22:01:30 kael Exp $
 """
 __version__ ="$Revision: 1.22 $"
 
-import commands
+import subprocess
 import re
 import string
 import os
 import tempfile
 from types import *
 
-from __init__ import *
+from .__init__ import *
 
 #import kdbom.exceptions 
 
@@ -188,7 +188,7 @@ class Record (StringSequence):
 
         if len(self.sequence) >= minLength:
 
-            startPos=range(0,len(self)-(minLength)+1,startOffset)
+            startPos=list(range(0,len(self)-(minLength)+1,startOffset))
 
             if returnEndTile:
                 endStartPos = len(self)-tileLength
@@ -270,7 +270,7 @@ def FastaIterator(fh,raw=False):
         else:
             rec=Record()
             rec.title=title
-            rec.sequence=''.join(map(lambda x: x.rstrip(),preLines))
+            rec.sequence=''.join([x.rstrip() for x in preLines])
             yield rec
 
 iterator=FastaIterator
@@ -285,7 +285,7 @@ def fastaCount(things):
     file objects or paths .
     """
     if type(things) in (ListType,TupleType):
-        return map(fastaCount,things)
+        return list(map(fastaCount,things))
     return len(fTitlePat.findall(toString(things)))
 
 
@@ -296,7 +296,7 @@ def fastaTitles(things):
     file objects or paths .
     """
     if type(things) in (ListType,TupleType):
-        return map(fastaTitles,things)
+        return list(map(fastaTitles,things))
     return titlePat.findall(toString(things))
 
 
@@ -308,9 +308,9 @@ def countRecsAndBases(things):
     file objects or paths .
     """
     if type(things) in (ListType,TupleType):
-        manyRslts = map(countRecsAndBases,things)
-        tRecs = sum(map(lambda x: x[0],manyRslts))
-        tBases = sum(map(lambda x: x[1],manyRslts))
+        manyRslts = list(map(countRecsAndBases,things))
+        tRecs = sum([x[0] for x in manyRslts])
+        tBases = sum([x[1] for x in manyRslts])
         return (tRecs,tBases)
         
     recCount  = 0 
@@ -331,7 +331,7 @@ def baseComposition(things,caseSensitive=False):
     file objects or paths .
     """
     if type(things) in (ListType,TupleType):
-        return map(fastaCount,things)
+        return list(map(fastaCount,things))
 
     else:
         counts={}
@@ -341,7 +341,7 @@ def baseComposition(things,caseSensitive=False):
                     counts[letter]=0
                 counts[letter]+=1
 
-        for k in counts.keys():
+        for k in list(counts.keys()):
             if k not in string.letters:
                 del counts[k]
             else:
@@ -401,7 +401,7 @@ def screenHSPs(fastaFile,outFileName,MBfile,shortyLength=0,debug=False,excludeTi
     
     """
 
-    import blastNoSQL
+    from . import blastNoSQL
 
     filesToClose=[]
 
@@ -419,7 +419,7 @@ def screenHSPs(fastaFile,outFileName,MBfile,shortyLength=0,debug=False,excludeTi
     i=0
     for hsp in blastNoSQL.m8generator(MBfile):
         if i % 10000 ==0 and debug: 
-            print i
+            print(i)
         i+=1
         if hsp['query'] not in hsps:
             hsps[hsp['query']]={hsp['q_start']: hsp['q_end']}
@@ -429,7 +429,7 @@ def screenHSPs(fastaFile,outFileName,MBfile,shortyLength=0,debug=False,excludeTi
                 if hsp['q_end'] > hsps[hsp['query']][hsp['q_start']]:
                     hsps[hsp['query']][hsp['q_start']]= hsp['q_end']
             else:
-                starts = hsps[hsp['query']].keys()
+                starts = list(hsps[hsp['query']].keys())
                 starts.sort()
                 for start in starts:
                     if hsp['q_start'] < start and  hsp['q_end'] > start:
@@ -450,12 +450,12 @@ def screenHSPs(fastaFile,outFileName,MBfile,shortyLength=0,debug=False,excludeTi
             continue
         if  rec.title.split()[0] in hsps:
             newSeq = list(rec.sequence)
-            for start,end in hsps[rec.title.split()[0]].items():
+            for start,end in list(hsps[rec.title.split()[0]].items()):
                 #print start, end
                 newSeq[start-1:end] = 'X'*(end-start+1)
             rec.sequence = ''.join(newSeq)
         if shortyLength == 0 or max(rec.matchLengths('[AGCTU]+')) >= shortyLength:
-            print >> outFile, str(rec)    
+            print(str(rec), file=outFile)    
     for f in filesToClose:
         f.close()    
     
@@ -494,9 +494,9 @@ def dropLowLZW(inFile,outFile,minLZW):
     """Drop records with LZW sizes(or raitos if minLZW is a
     float) below minLZW.
     """
-    if type(minLZW) in (types.IntType,types.LongType):
+    if type(minLZW) in (int,int):
         cb = lambda r: r.LZWsize() >= minLZW
-    elif type(minLZW) == types.FloatType:
+    elif type(minLZW) == float:
         cb = lambda r: r.LZWratio() >= minLZW
 
     return fastaPartition(inFile,outFile,None,cb)
@@ -513,7 +513,7 @@ def dropDuplicates(inFile,outFile):
         else:
             seqs[rec]+=1
 
-    for rec,count in seqs.items():
+    for rec,count in list(seqs.items()):
         rec.title+='|%s'%count
         outfile.write(str(rec))
         outfile.write('\n')
@@ -630,7 +630,7 @@ def splitFasta(filename,splitCt=None,splitSize=None,
 
 
     if splitCt == None and splitSize == None:
-        raise ValueError, "Either splitCt or splitSize mut be an integer" 
+        raise ValueError("Either splitCt or splitSize mut be an integer") 
     
 
     rv=[]
@@ -650,7 +650,7 @@ def splitFasta(filename,splitCt=None,splitSize=None,
         #make files
         LengthsAndFiles = []
         for n in range(splitCt):
-            LengthsAndFiles.append([0,nameGenerator.next()])
+            LengthsAndFiles.append([0,next(nameGenerator)])
 
 
 
@@ -687,7 +687,7 @@ def splitFasta(filename,splitCt=None,splitSize=None,
                 oFile=None
             
     else:
-        raise ValueError, "Either splitCt or splitSize mut be an integer" 
+        raise ValueError("Either splitCt or splitSize mut be an integer") 
     
     return rv
 
@@ -719,7 +719,7 @@ def removeRecordsFromFile(fileName,recTitles,tmpDir=None):
     """
     import shutil
     if not os.access(fileName,os.W_OK):
-        raise IOError, "no write access for fasta file: %s" % fileName
+        raise IOError("no write access for fasta file: %s" % fileName)
 
     inFile = file(fileName)
 
@@ -775,12 +775,12 @@ class IterativeScreen:
         """
         self.inPath = inPath
         localFile,self.localPath=mystemp(suffix='.fasta')
-        s,o = commands.getstatusoutput("cp %s %s" %(inPath,self.localPath))
+        s,o = subprocess.getstatusoutput("cp %s %s" %(inPath,self.localPath))
         if s==0:
             self.longestRemaining=getLongestRecord(file(self.localPath))
             return self.longestRemaining.DRNABaseCount()
         else:
-            raise RuntimeError, "setup copy failed -  cp said: %s" %o
+            raise RuntimeError("setup copy failed -  cp said: %s" %o)
 
         #localFile.write(file(self.inPath).read())
         #localFile.close()
@@ -798,21 +798,21 @@ class IterativeScreen:
         
         mbCmd = ('megablast %s -d %s -f -R -i %s > %s'
                  % (self.MBparams,screenFastaPath,self.localPath,self.localPath+'.MBout'))
-        s,o = commands.getstatusoutput(mbCmd)
+        s,o = subprocess.getstatusoutput(mbCmd)
 
         if s != 0:
-            raise RuntimeError, ("---MEGABLAST FAILED---\nMEGABLAST command:%s\nEnd of output: %s\nExit Status: %s"
+            raise RuntimeError("---MEGABLAST FAILED---\nMEGABLAST command:%s\nEnd of output: %s\nExit Status: %s"
                                  % (mbCmd,o[-250:],s))
         
         screenOutFile,screenOutPath = mystemp()
         screenHSPs(self.localPath,screenOutPath,self.localPath+'.MBout',shortyLength=35,
                    excludeTitles=dbTitles)
-        s,o = commands.getstatusoutput("mv %s %s" %(screenOutPath,self.localPath))
+        s,o = subprocess.getstatusoutput("mv %s %s" %(screenOutPath,self.localPath))
         if s==0:
             self.longestRemaining=getLongestRecord(file(self.localPath))
             return self.longestRemaining.DRNABaseCount()
         else:
-            raise RuntimeError, "file replacment after screening failed-  mv said: %s" %o
+            raise RuntimeError("file replacment after screening failed-  mv said: %s" %o)
      
     
     def cleanUp(self):

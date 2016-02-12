@@ -6,14 +6,14 @@ def threadfunc(callback):
     callback = Async(callback)
     try:
         while True:
-            print "!"
+            print("!")
             callback()
             time.sleep(1)
     except:
-        print "thread exiting"
+        print("thread exiting")
 
 def printer(text):
-    print text
+    print(text)
 
 def caller(func, *args):
     func(*args)

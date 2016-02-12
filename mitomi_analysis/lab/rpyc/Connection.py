@@ -1,7 +1,7 @@
 import sys
-from Boxing import Box, dump_exception, load_exception
-from ModuleNetProxy import RootImporter
-from Lib import raise_exception, AttrFrontend
+from .Boxing import Box, dump_exception, load_exception
+from .ModuleNetProxy import RootImporter
+from .Lib import raise_exception, AttrFrontend
 
 
 FRAME_REQUEST = 1

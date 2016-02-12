@@ -31,8 +31,8 @@ class TFExample (tabbedfile.TabbedFile):
 if __name__ == '__main__':
     testFilePath = '/sumo/home/kael/lib/python-dev/tabbedfile/test.txt'
     myFile = TFExample(testFilePath)
-    print "name\tscore"
+    print("name\tscore")
     # you don't have to parse it you can just start iterating.
     for rec in myFile:
-        print "%s\t%s" %(rec.s1,rec.secretScore())
+        print("%s\t%s" %(rec.s1,rec.secretScore()))
 

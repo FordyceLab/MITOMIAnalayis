@@ -86,24 +86,24 @@ def __main__(args=None):
     longOptions = []   
     try:
         opts, args = getopt.getopt(args, shortOptions, longOptions)
-    except getopt.error, msg:
+    except getopt.error as msg:
         # there is an unknown option!
-            print msg      # prints the option error
-            print __doc__  # prints the usage message from the top
+            print(msg)      # prints the option error
+            print(__doc__)  # prints the usage message from the top
             return (-2)
 
     for option,optionArg in opts:
         if option=='-h' or option=='-?':
-            print __doc__
+            print(__doc__)
             return(-1)     # '0' = no error in UNIX
         elif option == '-t':
             if fitProtocol != None:
-                print "only -t or -g can be specified, not both."
+                print("only -t or -g can be specified, not both.")
                 return -2
             fitProtocol = 4
         elif option == '-g':
             if fitProtocol != None:
-                print "only -t or -g can be specified, not both."
+                print("only -t or -g can be specified, not both.")
                 return -2
             fitProtocol = 1
         
@@ -111,20 +111,20 @@ def __main__(args=None):
             try:
                 pCutoff = float(optionArg)
             except:
-                print "-p argument must be a float"
+                print("-p argument must be a float")
                 return -2
         elif option == "-i":
             try:
                 iCutoff = int(optionArg)
             except:
-                print "-i argument must be an integer"
+                print("-i argument must be an integer")
                 return -2
         elif option=='-d':
              try:
                  y,m,d = [int(x) for x in optionArg.split('-')]
                  refDate = datetime.date(y,m,d)
              except:
-                 print "-d must be date like YYYY-MM-DD"
+                 print("-d must be date like YYYY-MM-DD")
                  return -2
         elif option == '-s':
             chipSet = optionArg
@@ -134,7 +134,7 @@ def __main__(args=None):
             elif optionArg == 'F':
                 normalize = False
             else:
-                print "-n argument must be either T of F"
+                print("-n argument must be either T of F")
                 return (-2)
         elif option == "-X":
             noSubmit = False
@@ -143,14 +143,14 @@ def __main__(args=None):
         elif option == '-G':
             noGrid = True
         else:
-            print "%s option not implemented" % option
+            print("%s option not implemented" % option)
 
 
     if None in (chipSet,fitProtocol,refDate,pCutoff,iCutoff,normalize):
-        print "\nRequired options/arguments missing."
-        print "chip set, ref. date, both cutoffs and a normalize choice are required."
-        print
-        print __doc__  # prints the usage message from the top
+        print("\nRequired options/arguments missing.")
+        print("chip set, ref. date, both cutoffs and a normalize choice are required.")
+        print()
+        print(__doc__)  # prints the usage message from the top
         return (-2)
 
     #
@@ -166,7 +166,7 @@ def __main__(args=None):
     try:
         chipSet = megachip.ChipSet(chipSet)
     except:
-        print "-s argument '%s' is not a known chip set." % chipSet
+        print("-s argument '%s' is not a known chip set." % chipSet)
         return -2
 
     for thing in args:
@@ -177,25 +177,25 @@ def __main__(args=None):
             try:
                 chips.append(megachip.Chip(thing))
             except:
-                print "%s is neither a study or a chip" % thing
+                print("%s is neither a study or a chip" % thing)
                 return -2
     chips = utils.unique(chips)
 
     # logging
-    print sys.argv[0], datetime.datetime.now().isoformat()
-    print "PARAMETERS"
+    print(sys.argv[0], datetime.datetime.now().isoformat())
+    print("PARAMETERS")
     params = (("chip set:",chipSet),
               ("fit protocol:",fitProtocol),
               ("ref date:",refDate),
               ("p-cutoff:",pCutoff),
               ("I-cutoff:",iCutoff),
               ("norm:",normalize))
-    print utils.tabbifyMatrix(params)
-    print
-    print "CHIPS"
+    print(utils.tabbifyMatrix(params))
+    print()
+    print("CHIPS")
     for c in chips:
-        print c
-    print 
+        print(c)
+    print() 
 
     # on to the run
     # submit to the grid, etc
@@ -206,9 +206,9 @@ def __main__(args=None):
         if noGrid and not force:
             confirm=''
             while confirm not in ('y','n'):
-                confirm=raw_input("Run job locally[y/n] ?")
+                confirm=input("Run job locally[y/n] ?")
             if confirm == 'n':
-                print "taxiCache.py job aborted."
+                print("taxiCache.py job aborted.")
                 return 1
         return calcQueries(chips,chipSet,fitProtocol,refDate,pCutoff,iCutoff,normalize)
 
@@ -217,23 +217,23 @@ def __main__(args=None):
         # is this job ready for grid submission?
         #
         if noSubmit:
-            print "No job submitted to the Grid Engine.\nRerun taxiCache.py without '-X' to submit job."
+            print("No job submitted to the Grid Engine.\nRerun taxiCache.py without '-X' to submit job.")
             return 0
 
         # get  user confirmation for grid submission
         if not force:
             confirm=''
             while confirm not in ('y','n'):
-                confirm=raw_input("Submit job [y/n] ?")
+                confirm=input("Submit job [y/n] ?")
             if confirm == 'n':
-                print "taxiCache.py job not submitted to Grid Engine."
+                print("taxiCache.py job not submitted to Grid Engine.")
                 return 1
 
         cmd = "echo %s | qsub -cwd -N taxiCache" % (' '.join([quoteArgs(x) for x in sys.argv]))
         gs=grid.GridSubmission(cmd)
-        print "Your taxiCache job has been submitted to the Grid Engine like:\n%s" % cmd
-        print "The Job ID is %s" % gs.jobID
-        print "A log of the results called taxiCache.o%s will be in the current directory." % gs.jobID
+        print("Your taxiCache job has been submitted to the Grid Engine like:\n%s" % cmd)
+        print("The Job ID is %s" % gs.jobID)
+        print("A log of the results called taxiCache.o%s will be in the current directory." % gs.jobID)
         return 0
 
 
@@ -244,8 +244,8 @@ def calcQueries(chips,chipSet,fitProtocol,refDate,pCutoff,iCutoff,normalize):
 
     from viroinfo import analysis
     
-    print '\t'.join([str(x) for x in ("chip","chip set","fit protocol",
-                                      "ref date","p-cutoff","I-cutoff","norm")])
+    print('\t'.join([str(x) for x in ("chip","chip set","fit protocol",
+                                      "ref date","p-cutoff","I-cutoff","norm")]))
     for c in chips:
         try:
             tq = analysis.TaxiQuery(c,chipSet,
@@ -256,14 +256,14 @@ def calcQueries(chips,chipSet,fitProtocol,refDate,pCutoff,iCutoff,normalize):
                                     fitProtocol=fitProtocol
                                     )
         except:
-            print '\t'.join([str(x) for x in ("*FAILED*",c,chipSet,fitProtocol,
-                                              refDate,pCutoff,iCutoff,normalize)])
+            print('\t'.join([str(x) for x in ("*FAILED*",c,chipSet,fitProtocol,
+                                              refDate,pCutoff,iCutoff,normalize)]))
             raise
             continue
         else:                        
-            print '\t'.join([str(x) for x in (c,chipSet,fitProtocol,
-                                              refDate,pCutoff,iCutoff,normalize)])
-    print "taxiCache job finished"
+            print('\t'.join([str(x) for x in (c,chipSet,fitProtocol,
+                                              refDate,pCutoff,iCutoff,normalize)]))
+    print("taxiCache job finished")
     return (0)
 
 if __name__ == "__main__":

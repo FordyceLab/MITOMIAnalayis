@@ -2,7 +2,7 @@
 remote interpreter functions
 """
 import sys
-from Helpers import RedirectedStd
+from .Helpers import RedirectedStd
 
 
 __all__ = ["remote_interpreter", "remote_pm"]

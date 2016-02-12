@@ -3,7 +3,7 @@
 # 
 
 import os
-import MalariaUtils
+from . import MalariaUtils
 import MySQLdb
 
 ####  Malaria Specific Globals
@@ -60,8 +60,8 @@ class MalariaSpotIterator:
 	def __iter__(self):
 		return self
 
-	def next(self):
-		spot = self.spots.next()
+	def __next__(self):
+		spot = next(self.spots)
 		oligoid = spot["ID"]
         	longID = getLongID(spot)
 
@@ -115,7 +115,7 @@ def getNamesAndSeqFromOLIGO(oligoid, cursor):
     sequence = ""
 
     if not row and oligoid.find("EMPTY") < 0:
-        print "Unable to find oligoid:", oligoid, ".  Tried", oligo_oligoid
+        print("Unable to find oligoid:", oligoid, ".  Tried", oligo_oligoid)
 
     used_names = []  # I'm sure there's a way to do this in SQL, but we'll do it here for now
                      # If an oligo hits the same target in multiple places, we only want to list it once

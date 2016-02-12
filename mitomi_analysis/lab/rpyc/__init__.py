@@ -4,8 +4,8 @@ http://rpyc.sourceforge.net
 by Tomer Filiba (tomerfiliba at gmail dot com)
 """
 import sys
-from Lib import rpyc_excepthook
-from Utils import *
+from .Lib import rpyc_excepthook
+from .Utils import *
 
 
 #

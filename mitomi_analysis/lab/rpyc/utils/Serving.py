@@ -7,7 +7,7 @@ from threading import Thread
 from Rpyc.Connection import Connection
 from Rpyc.Stream import SocketStream, PipeStream
 from Rpyc.Channel import Channel
-from Discovery import UDP_DISCOVERY_PORT, MAX_DGRAM_SIZE, QUERY_MAGIC
+from .Discovery import UDP_DISCOVERY_PORT, MAX_DGRAM_SIZE, QUERY_MAGIC
 
 DEFAULT_PORT = 18812
 

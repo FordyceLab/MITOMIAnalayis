@@ -1,10 +1,10 @@
 """BLAST Utilities that are free of DB connections.
 """
 import os, os.path
-import commands
+import subprocess
 import sys
 import types
-from __init__ import *
+from .__init__ import *
 
 from types import StringType,UnicodeType,StringTypes
 
@@ -27,9 +27,9 @@ class M8Set:
             (qryName,subjName,ident,length,gaps,mismatch,
              q_start,q_end,t_start,t_end,e,score)   =  l.split()
 
-            ident,e,score = map(float,(ident,e,score))
-            length,gaps,mismatch,q_start,q_end,t_start,t_end = map(
-                int,(length,gaps,mismatch,q_start,q_end,t_start,t_end))
+            ident,e,score = list(map(float,(ident,e,score)))
+            length,gaps,mismatch,q_start,q_end,t_start,t_end = list(map(
+                int,(length,gaps,mismatch,q_start,q_end,t_start,t_end)))
 
             if (qryName,subjName) not in self.alignments:
                 self.alignments[(qryName,subjName)] = []
@@ -40,8 +40,7 @@ class M8Set:
         sequenceMap = search.sequenceMap()
         searchID=search.ID()
 
-        rows = map(lambda x: (searchID,sequenceMap[x[0]],sequenceMap[x[1]]) ,
-                   self.alignments.keys())
+        rows = [(searchID,sequenceMap[x[0]],sequenceMap[x[1]]) for x in list(self.alignments.keys())]
 
         
         blastDB.Hit.insertMany(('Search_ID','Query_Sequence_ID','Subject_Sequence_ID'),
@@ -67,10 +66,10 @@ class M8Set:
                     Search_ID=search.ID())[0].Hit_ID
                 hitMap[(qryName,subjName)]=hitID
                 
-            return map(lambda x:  [hitID] + x, myAlignments)
+            return [[hitID] + x for x in myAlignments]
 
         rows = []
-        for a in self.alignments.items():
+        for a in list(self.alignments.items()):
             rows.extend(prepRow(a))
 
 
@@ -150,7 +149,7 @@ class disposableMB:
             self.qPath = query.name
 
         if not (os.path.exists(db) and os.access(db,os.F_OK)):
-            raise ArgumentError, "db: %s Not Found" %db
+            raise ArgumentError("db: %s Not Found" %db)
         else:
             self.dPath=db
             
@@ -167,10 +166,10 @@ class disposableMB:
         self.blastCmd = ("%s/usr/local/bin/megablast  -i %s -d %s -o %s -D 3 %s -f -R" 
                          % (sgeCmd,self.qPath,self.dPath,
                             self.oPath,self.options))
-        self.blastStat,self.blastOut = commands.getstatusoutput(self.blastCmd)
+        self.blastStat,self.blastOut = subprocess.getstatusoutput(self.blastCmd)
                 
         if self.blastStat != 0:
-            raise RuntimeError, ("---MEGABLAST FAILED---\nMEGABLAST command:%s\nEnd of output: %s\nExit Status: %s"
+            raise RuntimeError("---MEGABLAST FAILED---\nMEGABLAST command:%s\nEnd of output: %s\nExit Status: %s"
                                  % (self.blastCmd,self.blastOut[-25:],self.blastStat))
         
         return m8generator(file(self.oPath))
@@ -205,7 +204,7 @@ class DisposableNCBIBLAST:
             self.qPath = query.name
 
         if not (os.path.exists(db) and os.access(db,os.F_OK)):
-            raise ArgumentError, "db: %s Not Found" %db
+            raise ArgumentError("db: %s Not Found" %db)
         else:
             self.dPath=db
             
@@ -225,10 +224,10 @@ class disposableBLAST (DisposableNCBIBLAST):
         blastCmd = ("/usr/local/bin/blastall  -i %s -d %s -o %s -m 8 %s" 
                     % (self.qPath,self.dPath,
                        self.oPath,self.options))
-        blastStat,blastOut = commands.getstatusoutput(blastCmd)
+        blastStat,blastOut = subprocess.getstatusoutput(blastCmd)
                 
         if blastStat != 0:
-            raise RuntimeError, ("---BLAST FAILED---\nBLAST command:%s\nEnd of output: %s\nExit Status: %s"
+            raise RuntimeError("---BLAST FAILED---\nBLAST command:%s\nEnd of output: %s\nExit Status: %s"
                                  % (blastCmd,blastOut[-500:],blastStat))
         
         return m8generator(file(self.oPath))
@@ -245,10 +244,10 @@ class DisposableMB(DisposableNCBIBLAST):
         blastCmd = ("/usr/local/bin/megablast  -i %s -d %s -o %s -D 3 %s -f -R" 
                     % (self.qPath,self.dPath,
                        self.oPath,self.options))
-        blastStat,blastOut = commands.getstatusoutput(blastCmd)
+        blastStat,blastOut = subprocess.getstatusoutput(blastCmd)
                 
         if blastStat != 0:
-            raise RuntimeError, ("---MEGABLAST FAILED---\nMEGABLAST command:%s\nEnd of output: %s\nExit Status: %s"
+            raise RuntimeError("---MEGABLAST FAILED---\nMEGABLAST command:%s\nEnd of output: %s\nExit Status: %s"
                                  % (blastCmd,blastOut[-25:],blastStat))
         
         return m8generator(file(self.oPath))
@@ -273,7 +272,7 @@ class TaxHitDistribution:
         self.genusExpect = None
         self.familyExpect = None
 
-        if type(m8paths) in types.StringTypes:
+        if type(m8paths) in (str,):
             m8paths=(m8paths,)
 
         for p in m8paths:
@@ -301,12 +300,12 @@ class TaxHitDistribution:
                     self.giCount[gi] = n
                 else:
                     self.giCount[gi] +=n
-            print '2'
+            print('2')
 
                 
 
-        taxMap=ncbi.giInfo.taxMap(self.giCount.keys())
-        for gi in self.giCount.keys():
+        taxMap=ncbi.giInfo.taxMap(list(self.giCount.keys()))
+        for gi in list(self.giCount.keys()):
             try:
                 t,s,g,f  = taxMap[gi]
             except KeyError:
@@ -329,7 +328,7 @@ class TaxHitDistribution:
     def setBlastDBSizeExpected(self,DBpath):
         """
         """
-        import blast
+        from . import blast
         ffRec = blast.FastaFile(Filename=DBath)
 
         sRows = ncbi.ncbiDB.fetchall (
@@ -365,7 +364,7 @@ class TaxHitDistribution:
         """
 
         if not isinstance(refDist,TaxHitDistribution):
-            raise ValueError , "refDist must be a  TaxHitDistribution instance"
+            raise ValueError("refDist must be a  TaxHitDistribution instance")
 
         self.speciesExpect = refDist.speciesCount
         self.genusExpect = refDist.genusCount
@@ -406,7 +405,7 @@ class TaxHitDistribution:
         from viroinfo import taxon
         rows = []
         if taxIDs == None:
-            taxIDs = expectedDict.keys()
+            taxIDs = list(expectedDict.keys())
         
         for s in taxIDs:
             x2,p,o,e = self.chiSquared(obsDict,expectedDict,s)

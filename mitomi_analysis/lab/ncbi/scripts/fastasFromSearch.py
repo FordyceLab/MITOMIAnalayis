@@ -3,7 +3,7 @@
 #
 #
 #
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import sys
 import os.path
 import xml.dom.minidom
@@ -11,7 +11,7 @@ import xml.dom.minidom
 _author_email_="kael@derisilab.ucsf.edu"
 _tool_str_=os.path.split(__file__)[-1]
 
-ncbiID="&email=%s&tool=%s" % tuple([urllib.quote_plus(x) for x in (_author_email_,_tool_str_)])
+ncbiID="&email=%s&tool=%s" % tuple([urllib.parse.quote_plus(x) for x in (_author_email_,_tool_str_)])
 
 BATCHSIZE=100
 
@@ -27,7 +27,7 @@ eDB="NucCore"
 ##############################
 
 
-sDoc=xml.dom.minidom.parse(urllib.urlopen(sURL%(eDB,urllib.quote_plus(sTerm))+ncbiID))
+sDoc=xml.dom.minidom.parse(urllib.request.urlopen(sURL%(eDB,urllib.parse.quote_plus(sTerm))+ncbiID))
 
 count=sDoc.getElementsByTagName('Count')[0].firstChild.data
 count=int(count)
@@ -39,7 +39,7 @@ while i <= count:
     fQry = fURL%(eDB,) + "&WebEnv=%s&query_key=%s"%(webEnv,queryKey) + "&retmax=%s&retstart=%s" %(BATCHSIZE,i) + '&rettype=%s' %(retType) + ncbiID
     i=i+BATCHSIZE
 
-    sys.stdout.write(urllib.urlopen(fQry).read())
+    sys.stdout.write(urllib.request.urlopen(fQry).read())
 
 
 sys.stdout.flush()

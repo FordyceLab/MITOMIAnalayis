@@ -2,7 +2,7 @@
 #
 # 
 
-from exceptions import *
+from .exceptions import *
 
 idMap = {}
 
@@ -18,7 +18,7 @@ def getLongID(spot):
     try:
         key = spot["ID"] + ":" + str(spot["Element_Occurrence"])
     except:
-        raise PluginError, ("\nSpot lookup failed.\nSpot String:\n%s\n" %
+        raise PluginError("\nSpot lookup failed.\nSpot String:\n%s\n" %
                             (str(spot)))
     return idMap[key]
 

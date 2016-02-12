@@ -21,12 +21,12 @@ if __name__ == "__main__":
     opts,args = getopt(sys.argv[1:],'t:h?')
     for o,a in opts:
         if o in ('-h','-?'):
-            print __doc__
+            print(__doc__)
             sys.exit(2)
         elif o == '-t':
             if a == '-':
                 if len(args) == 0:
-                    print __doc__
+                    print(__doc__)
                     raise GetoptError(
                         "both eland results and title file are stdin")
                 else:
@@ -34,23 +34,23 @@ if __name__ == "__main__":
             else:
                 tFile=file(a)
         else:
-            print __doc__
+            print(__doc__)
             raise GetoptError('unknown option: %s'%(o))
 
-    import solexa
+    from . import solexa
 
     if tFile == None:
         if len(args)==0:
             try:
-                print ''.join(solexa.eland2fastaString(sys.stdin)),
+                print(''.join(solexa.eland2fastaString(sys.stdin)), end=' ')
             except KeyboardInterrupt:
-                print 
-                print __doc__
+                print() 
+                print(__doc__)
                 sys.exit(2)
 
         else:
             for fn in args:
-                print ''.join(solexa.eland2fastaString(file(fn))),
+                print(''.join(solexa.eland2fastaString(file(fn))), end=' ')
         
     else:
         titles = {}
@@ -69,7 +69,7 @@ if __name__ == "__main__":
             for eLine in f:
                 eSplit=eLine.split()
                 if eSplit[0] in titles:
-                    print "%s\n%s" %(eSplit[0],eSplit[1])
+                    print("%s\n%s" %(eSplit[0],eSplit[1]))
         
         
             

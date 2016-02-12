@@ -2,15 +2,15 @@
 BLAST result storage and retrieval.
 """
 
-import commands
+import subprocess
 import os
 import os.path
 import datetime
 from types import *
 
-from __init__ import *
-from fasta import *
-from blastNoSQL import *
+from .__init__ import *
+from .fasta import *
+from .blastNoSQL import *
 
 from kdbom import kdbom
 
@@ -25,7 +25,7 @@ except:
                             user='readonly',
                             passwd='')
     except:
-        print 'blast mysqldb not found'
+        print('blast mysqldb not found')
 
 class Db (kdbom.KSqlObject):
     """
@@ -102,19 +102,19 @@ class Search (kdbom.KSqlObject):
         """
         hitRows = blastDB.Hit({"Search_ID":self.ID()},
                               selectExpr="Hit_ID,Query_Sequence_ID,Subject_Sequence_ID")
-        return dict(map(lambda x: ((x[1],x[2]),x[0]),hitRows))
+        return dict([((x[1],x[2]),x[0]) for x in hitRows])
 
     def hitSequenceNameMap(self):
          """retuns a dictionary of these - (Query m8Name ,Subject m8Name):Hit_ID,
          for all Hit in a search.
          """
-         sMap = dict(zip(self.sequenceMap().values(),
-                         self.sequenceMap().keys()))
+         sMap = dict(list(zip(list(self.sequenceMap().values()),
+                         list(self.sequenceMap().keys()))))
          
 
          hitRows = blastDB.Hit({"Search_ID":self.ID()},
                                selectExpr="Hit_ID,Query_Sequence_ID,Subject_Sequence_ID")
-         return dict(map(lambda x: ((sMap[x[1]],sMap[x[2]]),x[0]),hitRows))
+         return dict([((sMap[x[1]],sMap[x[2]]),x[0]) for x in hitRows])
         
        
 
@@ -124,8 +124,8 @@ class Search (kdbom.KSqlObject):
         """
 
         if requery or self.__sMap == None:
-            self.__sMap = dict(FastaFile(self.Fasta_File_ID).sequenceMap().items() +
-                               Db(self.Db_ID).sequenceMap().items())
+            self.__sMap = dict(list(FastaFile(self.Fasta_File_ID).sequenceMap().items()) +
+                               list(Db(self.Db_ID).sequenceMap().items()))
         return self.__sMap
 
 class Sequence (kdbom.KSqlObject):
@@ -257,7 +257,7 @@ def insertFastaFile(fastaFilePath,
     """
     """
     if blastDB.Fasta_File.count(Filename=fastaFilePath) > 0:
-        raise Warning, "Fasta File %s is already in %" %(fastaFilePath,blastDB.name)
+        raise Warning("Fasta File %s is already in %" %(fastaFilePath,blastDB.name))
 
     ff=file(fastaFilePath)
     fi=FastaIterator(ff)
@@ -309,10 +309,10 @@ def insertBlastResults(dbFilePath,
         m8resultPaths = [m8resultPaths]
 
     # check paths
-    dataPaths = map(os.path.abspath,[ dbFilePath,qryFilePath] + m8resultPaths)
+    dataPaths = list(map(os.path.abspath,[ dbFilePath,qryFilePath] + m8resultPaths))
     for fpath in dataPaths:
         if not os.access(fpath,os.R_OK):
-            raise IOError, "%s is unreadable" % fpath
+            raise IOError("%s is unreadable" % fpath)
     #
     # Blast Database
     #
@@ -324,7 +324,7 @@ def insertBlastResults(dbFilePath,
     if Sequence._table.count(Fasta_File_ID=fastaDb.ID()) == 0:
         fastaDb.insertSequences()
 
-    print "db sequences inserted"
+    print("db sequences inserted")
 
     try:
         db = Db({'Path':dbFilePath,
@@ -347,7 +347,7 @@ def insertBlastResults(dbFilePath,
     if Sequence._table.count(Fasta_File_ID=fastaQry.ID()) == 0:
         fastaQry.insertSequences()
 
-    print "qry sequences inserted"
+    print("qry sequences inserted")
 
     #
     # Sequence ID Caches
@@ -355,7 +355,7 @@ def insertBlastResults(dbFilePath,
     qrySequences = dict(blastDB.Sequence({"Fasta_File_ID":fastaQry.ID()},selectExpr="Name,Sequence_ID"))
     dbSequences=dict(blastDB.Sequence({"Fasta_File_ID":fastaDb.ID()},selectExpr="Name,Sequence_ID"))
 
-    print "sequence caches initilized"
+    print("sequence caches initilized")
 
     #
     # Blast Search Record
@@ -383,9 +383,9 @@ def insertBlastResults(dbFilePath,
             (qryName,subjName,ident,length,gaps,mismatch,
              q_start,q_end,t_start,t_end,e,score)   =  l.split()
 
-            ident,e,score = map(float,(ident,e,score))
-            length,gaps,mismatch,q_start,q_end,t_start,t_end = map(
-                int,(length,gaps,mismatch,q_start,q_end,t_start,t_end))
+            ident,e,score = list(map(float,(ident,e,score)))
+            length,gaps,mismatch,q_start,q_end,t_start,t_end = list(map(
+                int,(length,gaps,mismatch,q_start,q_end,t_start,t_end)))
 
             qryID = qrySequences[qryName]
             subjID = dbSequences[subjName]
@@ -396,14 +396,14 @@ def insertBlastResults(dbFilePath,
                 hitDict[(searchID,qryID,subjID)].append([ident,length,gaps,mismatch,q_start,q_end,t_start,t_end,e,score])
 
 
-        print "m8 results read in yo"
+        print("m8 results read in yo")
 
         blastDB.Hit.insertMany(('Search_ID','Query_Sequence_ID','Subject_Sequence_ID'),
-                               hitDict.keys(),
+                               list(hitDict.keys()),
                                disableFKcheck=True,
                                ignore=True)
 
-        print "hits inserted"
+        print("hits inserted")
 
         #
         # unfortunately the hitID lookup has to be rebuilt after each file
@@ -416,7 +416,7 @@ def insertBlastResults(dbFilePath,
             hitIDmap[(qryID,subjID)] = hitID
 
         hsps=[]
-        for hit,alignments in hitDict.items():
+        for hit,alignments in list(hitDict.items()):
             hitID = hitIDmap[(hit[1],hit[2])]
             for alignment in alignments:
                 hsps.append([hitID]+alignment)
@@ -432,8 +432,8 @@ def insertBlastResults(dbFilePath,
                                ignore=True)
 
 
-        print "hsps inserted"
-        print "%s done" % m8resultPath
+        print("hsps inserted")
+        print("%s done" % m8resultPath)
 
             
 
