@@ -1,11 +1,3 @@
-#!/usr/bin/env python
-#
-# [File Name Here]
-#
-# Author: [Your Name Here]
-#
-# [A Description Here]
-
 from __future__ import division
 import os
 import sys
