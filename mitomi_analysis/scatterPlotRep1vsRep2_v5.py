@@ -1,11 +1,9 @@
-from __future__ import division
 import sys
 import os
 from getopt import getopt
-import plotUtils
-import stats_utils
+from . import plotUtils
 import numpy as N
-import fileIOUtils
+from . import fileIOUtils
 from operator import itemgetter
 from scipy import stats
 
@@ -33,27 +31,27 @@ def main(argv=None):
     try:
         optlist, args = getopt(argv[1:], "hc:")
     except:
-        print ""
-        print HELP_STRING
+        print("")
+        print(HELP_STRING)
         sys.exit(1)
 
     if len(optlist) == 0:
-        print ""
-        print HELP_STRING
+        print("")
+        print(HELP_STRING)
         sys.exit(1)
 
     for (opt, opt_arg) in optlist:
-        print opt
-        print opt_arg
+        print(opt)
+        print(opt_arg)
         if opt == '-h':
-            print ""
-            print HELP_STRING
+            print("")
+            print(HELP_STRING)
             sys.exit(1)
         elif opt == '-c':
             cFN = opt_arg
 
     if cFN == "":
-        print HELP_STRING
+        print(HELP_STRING)
         sys.exit(1)
 
     # make array to hold data
@@ -70,31 +68,31 @@ def main(argv=None):
             pass
         else:
             tempL = line.strip().split('\t')
-            if dD.has_key(int(tempL[16])):
+            if int(tempL[16]) in dD:
                 if len(dD[int(tempL[16])]) < 2:
                     dD[int(tempL[16])].append(float(tempL[18]))
                 else:
-                    if N.isnan(dD[int(tempL[16])][0]) and
-                    not N.isnan(dD[int(tempL[16])][1]) and
-                    not N.isnan(float(tempL[18])):
+                    if (N.isnan(dD[int(tempL[16])][0]) and
+                        not N.isnan(dD[int(tempL[16])][1]) and
+                        not N.isnan(float(tempL[18]))):
                         dD[int(tempL[16])][0] = (float(tempL[18]))
-                    elif not N.isnan(dD[int(tempL[16])][0]) and
-                    N.isnan(dD[int(tempL[16])][1]) and
-                    not N.isnan(float(tempL[18])):
+                    elif (not N.isnan(dD[int(tempL[16])][0]) and
+                          N.isnan(dD[int(tempL[16])][1]) and
+                          not N.isnan(float(tempL[18]))):
                         dD[int(tempL[16])][1] = (float(tempL[18]))
                     else:
                         pass
-            if rD.has_key(int(tempL[16])):
+            if int(tempL[16]) in rD:
                 if len(rD[int(tempL[16])]) < 2:
                     rD[int(tempL[16])].append(float(tempL[20]))
                 else:
-                    if N.isnan(rD[int(tempL[16])][0]) and
+                    if (N.isnan(rD[int(tempL[16])][0]) and
                     not N.isnan(rD[int(tempL[16])][1]) and
-                    not N.isnan(float(tempL[20])):
+                    not N.isnan(float(tempL[20]))):
                         rD[int(tempL[16])][0] = (float(tempL[20]))
-                    elif not N.isnan(rD[int(tempL[16])][0]) and
+                    elif (not N.isnan(rD[int(tempL[16])][0]) and
                     N.isnan(rD[int(tempL[16])][1]) and
-                    not N.isnan(float(tempL[20])):
+                    not N.isnan(float(tempL[20]))):
                         rD[int(tempL[16])][1] = (float(tempL[20]))
                     else:
                         pass
@@ -103,8 +101,8 @@ def main(argv=None):
                 rD[int(tempL[16])] = [float(tempL[20])]
     cF.close()
 
-    dDL = sorted(dD.items(), key=itemgetter(0))
-    rDL = sorted(rD.items(), key=itemgetter(0))
+    dDL = sorted(list(dD.items()), key=itemgetter(0))
+    rDL = sorted(list(rD.items()), key=itemgetter(0))
 
     for b in range(0, len(dDL)):
         dA[b][0] = dDL[b][1][0]
