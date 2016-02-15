@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+
+import sys
+import mitomi_analysis
+
+args = sys.argv[1:]
+
+subcommand = args[0]
+
+cl_args = args[1:]
+
+if subcommand == "concat":
+    mitomi_analysis.gprFilesToConcatFile_v3.main(cl_args)
