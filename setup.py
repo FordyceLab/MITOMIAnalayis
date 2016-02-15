@@ -7,10 +7,11 @@ setup(name='mitomi_analysis',
       author='Tyler Shimko',
       author_email='tshimko@stanford.edu',
       license='MIT',
-      packages=['funniest'],
+      packages=['mitomi_analysis'],
       install_requires=[
-        'matplotlib'
+        'matplotlib',
         'numpy',
-        'scripy',
+        'scipy',
       ],
+      scripts=['bin/mitomi'],
       zip_safe=False)
