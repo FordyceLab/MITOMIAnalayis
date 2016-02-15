@@ -1,6 +1,3 @@
-
-import os
-import sys
 import numpy as N
 import operator as O
 from scipy import stats

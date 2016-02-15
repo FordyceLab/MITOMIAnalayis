@@ -1,8 +1,6 @@
 from numpy import *
-import types
 import matplotlib
 from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
 
 matplotlib.use('Agg')
 

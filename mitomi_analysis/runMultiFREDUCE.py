@@ -1,9 +1,6 @@
-
 import sys
 import os
 from getopt import getopt
-import fileIOUtils
-import numpy as N
 
 HELP_STRING = """
 runMultiFREDUCE.py
@@ -67,15 +64,15 @@ def main(argv=None):
     for a in range(6, 10):
         for b in range(0, 3):
             print('working on ' + str(a) + ' ' + str(b))
-            print('./freduce -r -x ' + expFN + ' -s ' + seqFN + 'ta '\
-                + str(a) + ' ' + str(b) + ' > ' + \
-                expFN[:-4] + '.r-' + str(a) + '-' + str(b) + '.txt')
+            print('./freduce -r -x ' + expFN + ' -s ' + seqFN + 'ta ' +
+                  str(a) + ' ' + str(b) + ' > ' + expFN[:-4] + '.r-' + str(a) +
+                  '-' + str(b) + '.txt')
             os.system('./freduce -r -x ' + expFN + ' -s ' + seqFN + 'ta ' +
                       str(a) + ' ' + str(b) + ' > ' + expFN[:-4] + '.r-' +
                       str(a) + '-' + str(b) + '.txt')
-            print('./freduce -x ' + expFN + ' -s ' + seqFN + 'ta '\
-                + str(a) + ' ' + str(b) + ' > ' + \
-                expFN[:-4] + '.nr-' + str(a) + '-' + str(b) + '.txt')
+            print('./freduce -x ' + expFN + ' -s ' + seqFN + 'ta ' + str(a) +
+                  ' ' + str(b) + ' > ' + expFN[:-4] + '.nr-' + str(a) + '-' +
+                  str(b) + '.txt')
             os.system('./freduce -x ' + expFN + ' -s ' + seqFN + 'ta ' +
                       str(a) + ' ' + str(b) + ' > ' + expFN[:-4] + '.nr-' +
                       str(a) + '-' + str(b) + '.txt')

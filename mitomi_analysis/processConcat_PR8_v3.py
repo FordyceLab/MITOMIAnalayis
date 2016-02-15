@@ -3,7 +3,6 @@ import os
 from getopt import getopt
 import chipSingleconcUtils
 import plotUtils
-import statsUtils
 import numpy as N
 import fileIOUtils
 import fitUtils
