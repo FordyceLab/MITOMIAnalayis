@@ -1,6 +1,6 @@
 import sys
 from getopt import getopt
-import chipSingleconcUtils
+from . import chipSingleconcUtils
 
 
 HELP_STRING = """

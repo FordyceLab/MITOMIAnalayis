@@ -1,5 +1,5 @@
 import numpy as N
-import fitUtils
+from . import fitUtils
 
 
 def makeSpot2OligoDict(spot2OligoFileName):

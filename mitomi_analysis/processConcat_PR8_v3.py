@@ -1,11 +1,11 @@
 import sys
 import os
 from getopt import getopt
-import chipSingleconcUtils
-import plotUtils
+from . import chipSingleconcUtils
+from . import plotUtils
 import numpy as N
-import fileIOUtils
-import fitUtils
+from . import fileIOUtils
+from . import fitUtils
 from scipy import stats
 
 

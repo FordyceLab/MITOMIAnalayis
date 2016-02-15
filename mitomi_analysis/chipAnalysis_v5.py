@@ -1,10 +1,10 @@
 import sys
 import os
 from getopt import getopt
-import chipSingleconcUtils
-import plotUtils
+from . import chipSingleconcUtils
+from . import plotUtils
 import numpy as N
-import fileIOUtils
+from . import fileIOUtils
 
 
 HELP_STRING = """

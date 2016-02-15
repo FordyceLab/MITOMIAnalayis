@@ -1,7 +1,7 @@
 import sys
 import os
 from getopt import getopt
-import fileIOUtils
+from . import fileIOUtils
 import numpy as N
 
 
