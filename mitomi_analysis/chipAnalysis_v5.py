@@ -88,12 +88,12 @@ def main(argv=None):
         sys.exit(1)
 
     # get lists from concat file
-    blockL, oRL, oCL, rows, cols, diaL, flagL, pFL, dFL, pBL, dBL,
-    cFL = chipSingleconcUtils.concatFileToLists_v3(concatFileName)
+    blockL, oRL, oCL, rows, cols, diaL, flagL, pFL, dFL, pBL, dBL, cFL = \
+        chipSingleconcUtils.concatFileToLists_v3(concatFileName)
 
     # determine spots per column and number of columns
-    numCols,
-    spotsPerCol = chipSingleconcUtils.determineDimensions_v3(concatFileName)
+    numCols, spotsPerCol = \
+        chipSingleconcUtils.determineDimensions_v3(concatFileName)
 
     print(numCols, spotsPerCol)
     dimensions = (spotsPerCol, numCols)
@@ -114,24 +114,24 @@ def main(argv=None):
     oligoD = chipSingleconcUtils.makeSpot2OligoDict(spot2OligoFileName)
 
     # deal with flagged spots
-    flags, pFg, DNAFg, pBg, DNABg,
-    chFg = chipSingleconcUtils.zeroFlaggedSpots(flagL, pFL, dFL, pBL, dBL, cFL)
+    flags, pFg, DNAFg, pBg, DNABg, chFg = \
+        chipSingleconcUtils.zeroFlaggedSpots(flagL, pFL, dFL, pBL, dBL, cFL)
 
     # create pBSub, DNABSub, and chBSub lists
-    pBSub, DNABSub,
-    chBSub = chipSingleconcUtils.backgroundSubtract_v2(pFL,
-                                                       pBL,
-                                                       dFL,
-                                                       dBL,
-                                                       cFL,
-                                                       dBL,
-                                                       pTh=pTh,
-                                                       dTh=DNATh,
-                                                       cTh=chTh)
+    pBSub, DNABSub, chBSub = \
+        chipSingleconcUtils.backgroundSubtract_v2(pFL,
+                                                  pBL,
+                                                  dFL,
+                                                  dBL,
+                                                  cFL,
+                                                  dBL,
+                                                  pTh=pTh,
+                                                  dTh=DNATh,
+                                                  cTh=chTh)
 
     # create ratio and ratioNorm lists
-    ratio, ratioNorm, ratioNormNorm,
-    chBSubMean = chipSingleconcUtils.calculateRatios(pBSub, DNABSub, chBSub)
+    ratio, ratioNorm, ratioNormNorm, chBSubMean = \
+        chipSingleconcUtils.calculateRatios(pBSub, DNABSub, chBSub)
 
     # fill arrays with data
     for n in range(0, len(rows)):
