@@ -6,7 +6,7 @@ import numpy as N
 
 
 HELP_STRING = """
-outputDataForfREDUCE_v4.py
+prereduce
 
 Authored by: Polly Fordyce, August 2010
 Uodated by: Tyler Shimko, February 2016
@@ -17,6 +17,8 @@ input files for fREDUCE.
      -h    print this help message
      -c    concat_processed filename
 
+Example usage:
+mitomi prereduce -c Pho4_Concat_Processed.txt
 """
 
 

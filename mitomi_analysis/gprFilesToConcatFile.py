@@ -4,7 +4,7 @@ from . import chipSingleconcUtils
 
 
 HELP_STRING = """
-gprFilesToConcatFile_v2.py
+concat
 
 Authored by: Polly Fordyce, August 2010
 Updated by: Tyler Shimko, February 2016
@@ -29,7 +29,7 @@ orientation of the tiff file.
           .tiff file
 
 Example usage:
-python gprFilesToConcatFile.py -p Pho4_Protein.gpr -d Pho4_DNA.gpr -c Pho4_Chambers.gpr -o Pho4_Concat.txt -m
+mitomi concat -p Pho4_Protein.gpr -d Pho4_DNA.gpr -c Pho4_Chambers.gpr -o Pho4_Concat.txt -m
 """
 
 

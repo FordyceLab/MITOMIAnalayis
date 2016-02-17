@@ -8,7 +8,7 @@ from . import fileIOUtils
 
 
 HELP_STRING = """
-chipAnalysis.py
+chip-analysis
 
 Authored by: Polly Fordyce, January 2008
 Updated by: Tyler Shimko, February 2016
