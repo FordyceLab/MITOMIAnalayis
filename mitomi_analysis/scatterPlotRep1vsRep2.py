@@ -173,7 +173,7 @@ def main(argv=None):
 
     dCorr = stats.pearsonr(d1o, d2o)
     rCorr = stats.pearsonr(r1o, r2o)
-    oF = open(os.path.split(cFN)[0] + '/Corr.txt', 'w')
+    oF = open('./Corr.txt', 'w')
     oF.write('DCorr\tRCorr\n')
     oF.write(str(dCorr[0]) + '\t' + str(rCorr[0]) + '\n')
     oF.close()
