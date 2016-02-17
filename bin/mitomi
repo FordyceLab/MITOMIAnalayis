@@ -16,7 +16,7 @@ elif subcommand == "summarize":
 elif subcommand == "analyze":
     mitomi_analysis.processConcat_PR8_v3.main(args)
 
-elif subcommand == "prepreduce":
+elif subcommand == "prereduce":
     mitomi_analysis.outputDataForfREDUCE_newConcatFiles.main(args)
 
 elif subcommand == "reduce":
