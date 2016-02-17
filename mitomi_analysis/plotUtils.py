@@ -1,9 +1,9 @@
 from numpy import *
 import matplotlib
+
+# matplotlib.use('Agg')
+
 from mpl_toolkits.mplot3d import Axes3D
-
-matplotlib.use('Agg')
-
 from matplotlib import pylab as plt
 
 
