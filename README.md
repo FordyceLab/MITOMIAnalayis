@@ -32,3 +32,14 @@ $ rm mitomi_analysis
 ```
 
 ## Usage
+
+The `mitomi` tool has six basic subcommands. These commands include:
+
++ `concat` - concatenate .gpr files from different channels when imaging a device (replaces gprFilesToConcatFile.py)
++ `chip-analysis` - outputs many plots that can be used to diagnose issues with the MITOMI run and check for consistency (replaces chipAnalysis.py)
++ `process` - processes the raw concatenated files to calculate intensity ratios and other metrics (replaces processConcat_PR8.py)
++ `scatter-plot` - create scatter plots to compare the two replicates within a device (replaces scatterPlotRep1vsRep2.py)
++ `prereduce` - prepare files for running fREDUCE (replaces outputDataForfREDUCE_newConcatFiles.py)
++ `reduce` - runs fREDUCE (replaces runMultiFREDUCE.py)
+
+Each subcommand has a help string that can be summoned using the `-h` flag, for example `$ mitomi concat -h`. These help strings specify the inputs necessary to run each subcommand.
