@@ -52,7 +52,7 @@ def main(argv=None):
         print(HELP_STRING)
         sys.exit(1)
 
-    curDir = os.path.split(cFN)[0] + '/'
+    curDir = "./"
     tName = os.path.split(cFN)[1].split('_')[0]
 
     seq, rNN, DNAN = [], [], []

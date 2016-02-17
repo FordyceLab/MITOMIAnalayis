@@ -24,7 +24,7 @@ intensities.
      -h     print this help message
      -c     concat filename (required)
      -s     spot2Oligo filename (optional, default is
-            ../../MITOMI/MITOMI_Motif/8MerLibrary/Spot2OligoFile080108)
+            PR8MerSpot2OligoFile_4PinPrint_Stanford)
      -p     pBSub threshold value (optional)
      -d     DNABSub threshold value (optional)
      -t     chBSub threshold value (optional)
@@ -41,8 +41,11 @@ def main(argv=None):
         argv = sys.argv
 
     concatFileName = ""
-    spot2OligoFileName = "../../MITOMI/MITOMI_Motif/\
-                          8MerLibrary/Spot2OligoFile_080108"
+
+    data_dir = os.path.join(os.path.dirname(__file__), "data")
+
+    spot2OligoFileName = \
+        os.path.join(data_dir,"PR8MerSpot2OligoFile_4PinPrint_Stanford.txt")
     pTh = 1
     DNATh = 1
     chTh = 1000
@@ -67,7 +70,7 @@ def main(argv=None):
         if opt == '-h':
             print("")
             print(HELP_STRING)
-            sys.exit(1)
+            sys.exit(0)
         elif opt == '-c':
             concatFileName = opt_arg
         elif opt == '-s':
@@ -150,7 +153,9 @@ def main(argv=None):
         ratioArray[rows[n] - 1][cols[n] - 1] = ratio[n]
 
     # create a new directory to hold the chip analysis graphs
-    dataDir = os.path.split(concatFileName)[0]
+    dataDir = (os.path.split(concatFileName)[0]
+               if os.path.split(concatFileName)[0] != ""
+               else ".")
     analysisDir = str(dataDir) + "/ChipAnalysis/"
     fileIOUtils.createNewDir(analysisDir)
     threshFileName = analysisDir + "Thresholds.txt"

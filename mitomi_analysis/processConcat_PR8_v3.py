@@ -47,13 +47,17 @@ def main(argv=None):
         argv = sys.argv
 
     concatFileName = ""
-    spot2OligoFileName = "/Users/pollyfordyce/Documents/lib/\
-                          perl/PR8MerSpot2OligoFile.txt"
+
+    data_dir = os.path.join(os.path.dirname(__file__), "data")
+
+    spot2OligoFileName = \
+        os.path.join(data_dir,"PR8MerSpot2OligoFile_4PinPrint_Stanford.txt")
+
     pTh = -500
     DNATh = -500
     chTh = -1000
     nanFlag = 0
-    oligoSeqFileName = "/Users/pollyfordyce/Documents/lib/perl/8MerLib.txt"
+    oligoSeqFileName = os.path.join(data_dir,"8MerLib.txt")
     truncFlag = 1
 
     try:
@@ -119,7 +123,9 @@ def main(argv=None):
             oligoSeq.append('EMPTY')
 
     # histogram DNABSub and PBSub waves and fit them to a Gaussian
-    dataDir = os.path.split(concatFileName)[0]
+    dataDir = (os.path.split(concatFileName)[0]
+               if os.path.split(concatFileName)[0] != ""
+               else ".")
     analysisDir = str(dataDir) + "/NormalizationInfo/"
     fileIOUtils.createNewDir(analysisDir)
 
@@ -181,7 +187,6 @@ def main(argv=None):
     print("Number of spots per oligo = " + str(numSpotsPerOligo))
 
     # create a new directory to hold oligo analysis output
-    dataDir = os.path.split(concatFileName)[0]
     analysisDir = str(dataDir) + "/OligoAnalysis/"
     fileIOUtils.createNewDir(analysisDir)
     thFileName = analysisDir + "Threshholds.txt"
