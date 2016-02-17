@@ -32,7 +32,7 @@ intensities.
      -k     minimum y axis value for protein Fg and Bg graphs
 
 Example:
-python chipAnalysis.py -c concatFile_042108.txt -p 50 -d 1 -t 100 -j 600 -k 1400
+mitomi chip-analysis -c concatFile_042108.txt -p 50 -d 1 -t 100 -j 600 -k 1400
 """
 
 
@@ -45,7 +45,7 @@ def main(argv=None):
     data_dir = os.path.join(os.path.dirname(__file__), "data")
 
     spot2OligoFileName = \
-        os.path.join(data_dir,"PR8MerSpot2OligoFile_4PinPrint_Stanford.txt")
+        os.path.join(data_dir, "PR8MerSpot2OligoFile_4PinPrint_Stanford.txt")
     pTh = 1
     DNATh = 1
     chTh = 1000

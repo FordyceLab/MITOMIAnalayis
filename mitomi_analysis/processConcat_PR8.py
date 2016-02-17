@@ -51,13 +51,13 @@ def main(argv=None):
     data_dir = os.path.join(os.path.dirname(__file__), "data")
 
     spot2OligoFileName = \
-        os.path.join(data_dir,"PR8MerSpot2OligoFile_4PinPrint_Stanford.txt")
+        os.path.join(data_dir, "PR8MerSpot2OligoFile_4PinPrint_Stanford.txt")
 
     pTh = -500
     DNATh = -500
     chTh = -1000
     nanFlag = 0
-    oligoSeqFileName = os.path.join(data_dir,"8MerLib.txt")
+    oligoSeqFileName = os.path.join(data_dir, "8MerLib.txt")
     truncFlag = 1
 
     try:
