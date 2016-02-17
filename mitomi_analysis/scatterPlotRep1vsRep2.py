@@ -110,7 +110,7 @@ def main(argv=None):
         rA[b][0] = rDL[b][1][0]
         rA[b][1] = rDL[b][1][1]
 
-    oDir = os.path.split(cFN)[0] + '/OligoAnalysis/TextFiles'
+    oDir = './OligoAnalysis/TextFiles'
     if os.path.exists(oDir):
         pass
     else:
