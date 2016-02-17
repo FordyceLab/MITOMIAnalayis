@@ -17,7 +17,7 @@ elif subcommand == "process":
     mitomi_analysis.processConcat_PR8.main(args)
 
 elif subcommand == "scatter-plot":
-	mitomi_analysis.scatterPlotRep1vsRep2.main(args)
+    mitomi_analysis.scatterPlotRep1vsRep2.main(args)
 
 elif subcommand == "prereduce":
     mitomi_analysis.outputDataForfREDUCE_newConcatFiles.main(args)
