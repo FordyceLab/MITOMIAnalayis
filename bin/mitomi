@@ -10,10 +10,10 @@ subcommand = args[0]
 if subcommand == "concat":
     mitomi_analysis.gprFilesToConcatFile_v3.main(args)
 
-elif subcommand == "summarize":
+elif subcommand == "chip-analysis":
     mitomi_analysis.chipAnalysis_v5.main(args)
 
-elif subcommand == "analyze":
+elif subcommand == "process":
     mitomi_analysis.processConcat_PR8_v3.main(args)
 
 elif subcommand == "prereduce":
