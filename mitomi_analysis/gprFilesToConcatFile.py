@@ -83,8 +83,8 @@ def main(argv=None):
         print(HELP_STRING)
         sys.exit(1)
 
-    chipSingleconcUtils.concatGprFiles_v3(pFN, cFN, dFN, oFN,
-                                          singleF=sF, rlF=rlF, tbF=tbF)
+    chipSingleconcUtils.concatGprFiles(pFN, cFN, dFN, oFN, singleF=sF, rlF=rlF,
+                                       tbF=tbF)
 
     return 0
 

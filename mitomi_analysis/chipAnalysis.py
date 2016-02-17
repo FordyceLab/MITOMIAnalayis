@@ -92,11 +92,11 @@ def main(argv=None):
 
     # get lists from concat file
     blockL, oRL, oCL, rows, cols, diaL, flagL, pFL, dFL, pBL, dBL, cFL = \
-        chipSingleconcUtils.concatFileToLists_v3(concatFileName)
+        chipSingleconcUtils.concatFileToLists(concatFileName)
 
     # determine spots per column and number of columns
     numCols, spotsPerCol = \
-        chipSingleconcUtils.determineDimensions_v3(concatFileName)
+        chipSingleconcUtils.determineDimensions(concatFileName)
 
     print(numCols, spotsPerCol)
     dimensions = (spotsPerCol, numCols)
@@ -122,15 +122,15 @@ def main(argv=None):
 
     # create pBSub, DNABSub, and chBSub lists
     pBSub, DNABSub, chBSub = \
-        chipSingleconcUtils.backgroundSubtract_v2(pFL,
-                                                  pBL,
-                                                  dFL,
-                                                  dBL,
-                                                  cFL,
-                                                  dBL,
-                                                  pTh=pTh,
-                                                  dTh=DNATh,
-                                                  cTh=chTh)
+        chipSingleconcUtils.backgroundSubtract(pFL,
+                                               pBL,
+                                               dFL,
+                                               dBL,
+                                               cFL,
+                                               dBL,
+                                               pTh=pTh,
+                                               dTh=DNATh,
+                                               cTh=chTh)
 
     # create ratio and ratioNorm lists
     ratio, ratioNorm, ratioNormNorm, chBSubMean = \

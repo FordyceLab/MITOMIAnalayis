@@ -103,12 +103,12 @@ def main(argv=None):
     # get lists from concat file
     blocks, oRows, oCols, rows, cols, flags, pFg, DNAFg, pBg, DNABg, chFg, \
         pBSub, DNABSub, chBSub, ratio, ratioNorm, oligoNum = \
-        chipSingleconcUtils.outputInfoFromConcatFile_v3(concatFileName,
-                                                        spot2OligoFileName,
-                                                        pTh=pTh,
-                                                        DNATh=DNATh,
-                                                        chTh=chTh,
-                                                        nanFlag=nanFlag)
+        chipSingleconcUtils.outputInfoFromConcatFile(concatFileName,
+                                                     spot2OligoFileName,
+                                                     pTh=pTh,
+                                                     DNATh=DNATh,
+                                                     chTh=chTh,
+                                                     nanFlag=nanFlag)
 
     # make a dictionary linking oligo number and sequence
     oligoSeqD = chipSingleconcUtils.createDictFromSeqFile(
@@ -131,11 +131,11 @@ def main(argv=None):
 
     # normalize waves so that they are centered around zero, normalize ratio
     # to a max of 1
-    DNAN = chipSingleconcUtils.normalizeValues_v2(
+    DNAN = chipSingleconcUtils.normalizeValues(
         DNABSub, analysisDir, "DNABSub.png", inHi=0, numBins=100)
-    pN = chipSingleconcUtils.normalizeValues_v2(
+    pN = chipSingleconcUtils.normalizeValues(
         pBSub, analysisDir, "pBSub.png", inHi=0, numBins=100)
-    rN = chipSingleconcUtils.normalizeValues_v2(
+    rN = chipSingleconcUtils.normalizeValues(
         ratio, analysisDir, "ratio.png", inHi=0, numBins=100)
     rNN = chipSingleconcUtils.normalizeMaxValue(rN)
 

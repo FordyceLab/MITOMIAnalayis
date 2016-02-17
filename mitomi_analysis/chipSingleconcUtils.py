@@ -27,7 +27,7 @@ def makeSpot2OligoDict(spot2OligoFileName):
     return oligoD
 
 
-def concatGprFiles_v3(pFN, cFN, dFN, oFN, singleF=0, rlF=0, tbF=0):
+def concatGprFiles(pFN, cFN, dFN, oFN, singleF=0, rlF=0, tbF=0):
 
     dF = open(dFN, 'r')
     cF = open(cFN, 'r')
@@ -132,7 +132,7 @@ def concatGprFiles_v3(pFN, cFN, dFN, oFN, singleF=0, rlF=0, tbF=0):
         oF.write('\n')
 
 
-def concatFileToLists_v3(concatFileName):
+def concatFileToLists(concatFileName):
     """This program takes a concatenated Genepix results file
     and creates dictionaries of all of the data for further analysis."""
 
@@ -185,7 +185,7 @@ def zeroFlaggedSpots(flagList, pFgList, DNAFgList, pBgList, DNABgList,
     return flagList, newPFg, newDNAFg, newPBg, newDNABg, newChFg
 
 
-def backgroundSubtract_v2(pFg, pBg, DNAFg, DNABg, chFg, chBg, pTh=0, dTh=0,
+def backgroundSubtract(pFg, pBg, DNAFg, DNABg, chFg, chBg, pTh=0, dTh=0,
                           cTh=0, nanF=0):
 
     pBSub, dBSub, chBSub = [], [], []
@@ -261,7 +261,7 @@ def calculateRatios(pBSubList, DNABSubList, chBSubList):
     return ratioList, ratioNormList, ratioNormNormList, chBSubMean
 
 
-def normalizeValues_v2(inList, analysisDir, outFileName, inHi=0, numBins=100):
+def normalizeValues(inList, analysisDir, outFileName, inHi=0, numBins=100):
     """This program normalizes values so that they are centered
     around zero using python least squares minimization."""
 
@@ -374,7 +374,7 @@ def dataArray(spot2OligoFileName, colList, rowList, itemList):
     return outArray
 
 
-def determineDimensions_v3(concatFileName):
+def determineDimensions(concatFileName):
     """This program reads in a concat file and automatically determines
     the number of spots in each column."""
 
@@ -398,22 +398,22 @@ def determineDimensions_v3(concatFileName):
     return numCols, spotsPerCol
 
 
-def outputInfoFromConcatFile_v3(concatFileName, spot2OligoFileName, pTh=100,
-                                DNATh=1, chTh=1, nanFlag=0):
+def outputInfoFromConcatFile(concatFileName, spot2OligoFileName, pTh=100,
+                             DNATh=1, chTh=1, nanFlag=0):
 
     # get lists from concat file
     blocks, oRows, oCols, rows, cols, dia, flags, pFL, dFL, pBL, dBL, cFL = \
-        concatFileToLists_v3(concatFileName)
+        concatFileToLists(concatFileName)
 
     # deal with flagged spots
     flags, pFg, DNAFg, pBg, DNABg, chFg = zeroFlaggedSpots(flags, pFL, dFL,
                                                            pBL, dBL, cFL)
 
     # create pBSub, DNABSub, and chBSub lists
-    pBSub, DNABSub, chBSub = backgroundSubtract_v2(pFg, pBg, DNAFg, DNABg,
-                                                   chFg, DNABg, pTh=pTh,
-                                                   dTh=DNATh, cTh=chTh,
-                                                   nanF=nanFlag)
+    pBSub, DNABSub, chBSub = backgroundSubtract(pFg, pBg, DNAFg, DNABg,
+                                                chFg, DNABg, pTh=pTh,
+                                                dTh=DNATh, cTh=chTh,
+                                                nanF=nanFlag)
 
     # create ratio list
     ratio = calculateRatios(pBSub, DNABSub, chBSub)[0]
@@ -445,7 +445,7 @@ def outputInfoFromConcatFile_v3(concatFileName, spot2OligoFileName, pTh=100,
         oligoNum.append(oligo.split("_")[1])
 
     return [blocks, oRows, oCols, rows, cols, flags, pFg, DNAFg, pBg, DNABg,
-    chFg, pBSub, DNABSub, chBSub, ratio, ratioNorm, oligoNum]
+            chFg, pBSub, DNABSub, chBSub, ratio, ratioNorm, oligoNum]
 
 
 def createDictFromSeqFile(seqFileName, truncFlag=0):
