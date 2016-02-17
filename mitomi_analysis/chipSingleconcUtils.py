@@ -444,8 +444,8 @@ def outputInfoFromConcatFile_v3(concatFileName, spot2OligoFileName, pTh=100,
             oligo = 'EMPTY'
         oligoNum.append(oligo.split("_")[1])
 
-    return blocks, oRows, oCols, rows, cols, flags, pFg, DNAFg, pBg, DNABg,
-    chFg, pBSub, DNABSub, chBSub, ratio, ratioNorm, oligoNum
+    return [blocks, oRows, oCols, rows, cols, flags, pFg, DNAFg, pBg, DNABg,
+    chFg, pBSub, DNABSub, chBSub, ratio, ratioNorm, oligoNum]
 
 
 def createDictFromSeqFile(seqFileName, truncFlag=0):
