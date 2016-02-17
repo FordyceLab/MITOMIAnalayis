@@ -137,7 +137,7 @@ def main(argv=None):
     oF2.close()
 
     # create scatter plots of replicates vs each other
-    scatD = os.path.split(cFN)[0] + '/ScatterPlots/'
+    scatD = './ScatterPlots/'
     if os.path.exists(scatD):
         pass
     else:
