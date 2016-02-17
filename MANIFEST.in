@@ -1,0 +1,3 @@
+include mitomi_analysis/data/*
+include README.md
+include bin/*
