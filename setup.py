@@ -8,6 +8,7 @@ setup(name='mitomi_analysis',
       author_email='tshimko@stanford.edu',
       license='MIT',
       packages=['mitomi_analysis'],
+      include_package_data=True,
       install_requires=[
         'matplotlib',
         'numpy',
