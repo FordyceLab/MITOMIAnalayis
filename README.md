@@ -43,3 +43,5 @@ The `mitomi` tool has six basic subcommands. These commands include:
 + `reduce` - runs fREDUCE (replaces runMultiFREDUCE.py)
 
 Each subcommand has a help string that can be summoned using the `-h` flag, for example `$ mitomi concat -h`. These help strings specify the inputs necessary to run each subcommand.
+
+**Note:** *the `reduce` subcommand has not yet been tested since fREDUCE cannot be compiled on my 64-bit machine
