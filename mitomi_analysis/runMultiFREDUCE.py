@@ -14,7 +14,6 @@ expression file and sequence file.
     -h    print this help file
     -e    expression file
     -s    seq file
-    -f    fREDUCE dir
 
 You must specify expression and sequence filenames using their full paths.
 
@@ -26,7 +25,6 @@ def main(argv=None):
         argv = sys.argv
 
     expFN, seqFN = "", ""
-    fDir = ""
 
     try:
         optlist, args = getopt(argv[1:], "he:s:f:")
@@ -51,29 +49,26 @@ def main(argv=None):
             expFN = opt_arg
         elif opt == '-s':
             seqFN = opt_arg
-        elif opt == '-f':
-            fDir = opt_arg
 
     if expFN == "" or seqFN == "":
         print(HELP_STRING)
         sys.exit(1)
 
     os.system('cp ' + seqFN + ' ' + seqFN + 'ta')
-    os.chdir(fDir)
 
     for a in range(6, 10):
         for b in range(0, 3):
             print('working on ' + str(a) + ' ' + str(b))
-            print('./freduce -r -x ' + expFN + ' -s ' + seqFN + 'ta ' +
+            print('freduce -r -x ' + expFN + ' -s ' + seqFN + 'ta ' +
                   str(a) + ' ' + str(b) + ' > ' + expFN[:-4] + '.r-' + str(a) +
                   '-' + str(b) + '.txt')
-            os.system('./freduce -r -x ' + expFN + ' -s ' + seqFN + 'ta ' +
+            os.system('freduce -r -x ' + expFN + ' -s ' + seqFN + 'ta ' +
                       str(a) + ' ' + str(b) + ' > ' + expFN[:-4] + '.r-' +
                       str(a) + '-' + str(b) + '.txt')
-            print('./freduce -x ' + expFN + ' -s ' + seqFN + 'ta ' + str(a) +
+            print('freduce -x ' + expFN + ' -s ' + seqFN + 'ta ' + str(a) +
                   ' ' + str(b) + ' > ' + expFN[:-4] + '.nr-' + str(a) + '-' +
                   str(b) + '.txt')
-            os.system('./freduce -x ' + expFN + ' -s ' + seqFN + 'ta ' +
+            os.system('freduce -x ' + expFN + ' -s ' + seqFN + 'ta ' +
                       str(a) + ' ' + str(b) + ' > ' + expFN[:-4] + '.nr-' +
                       str(a) + '-' + str(b) + '.txt')
 
