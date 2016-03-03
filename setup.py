@@ -9,6 +9,7 @@ setup(name='mitomi_analysis',
       license='MIT',
       packages=['mitomi_analysis'],
       include_package_data=True,
+      setup_requires=["numpy"],
       install_requires=[
         'matplotlib',
         'numpy',
