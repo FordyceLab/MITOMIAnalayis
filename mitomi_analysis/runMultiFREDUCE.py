@@ -9,7 +9,8 @@ Authored by: Polly Fordyce, June 2010
 Updated by: Tyler Shimko, February 2016
 
 This program runs fREDUCE under a variety of different conditions for a given
-expression file and sequence file.
+expression file and sequence file. The program must be run from the
+subdirectory containing both the expression file and the seq file.
 
     -h    print this help file
     -e    expression file
